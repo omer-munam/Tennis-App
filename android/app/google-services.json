@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "745992195100",
+    "firebase_url": "https://flash-chat-b601a.firebaseio.com",
+    "project_id": "flash-chat-b601a",
+    "storage_bucket": "flash-chat-b601a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745992195100:android:4099c45182892519cb63d9",
+        "android_client_info": {
+          "package_name": "pk.digit.flash_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA66LhJWFMEOtmcbID-EGk_dCGaWcEbvjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745992195100:android:fc723a533d8c5675cb63d9",
+        "android_client_info": {
+          "package_name": "pk.digit.tennis_event"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA66LhJWFMEOtmcbID-EGk_dCGaWcEbvjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
