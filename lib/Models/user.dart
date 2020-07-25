@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
+  String id;
   String userName;
   String gender;
   String yearOfBirth;
@@ -10,10 +11,11 @@ class User {
   String image;
   String cCode;
 
-  User(this.userName, this.gender, this.yearOfBirth, this.playLevel, this.side,
-      this.phoneNumber, this.image, this.cCode);
+  User(this.id, this.userName, this.gender, this.yearOfBirth, this.playLevel,
+      this.side, this.phoneNumber, this.image, this.cCode);
 
   User.fromSnapshot(DocumentSnapshot snapshot) {
+    id = snapshot.data['id'];
     userName = snapshot.data['userName'];
     gender = snapshot.data['gender'];
     yearOfBirth = snapshot.data['yearOfBirth'];
