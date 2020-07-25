@@ -44,3 +44,5 @@ lib/generated_plugin_registrant.dart
 *.js.deps
 *.js.map
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+.flutter-plugins
+.flutter-plugins-dependencies
