@@ -46,34 +46,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
     };
     try {
       await _auth.verifyPhoneNumber(
-          phoneNumber: phoneNo,
-          codeAutoRetrievalTimeout: (String verId) {
-            this.verificationId = verId;
-          },
-          codeSent:
-              smsOTPSent, // WHEN CODE SENT THEN WE OPEN DIALOG TO ENTER OTP.
-          timeout: const Duration(seconds: 10),
-          verificationCompleted: (AuthCredential phoneAuthCredential) {
-            print(phoneAuthCredential);
-          },
-          verificationFailed: (AuthException exceptio) {
-            print('${exceptio.message}');
-          });
+        phoneNumber: phoneNo,
+        codeAutoRetrievalTimeout: (String verId) {
+          this.verificationId = verId;
+        },
+        codeSent:
+            smsOTPSent, // WHEN CODE SENT THEN WE OPEN DIALOG TO ENTER OTP.
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (AuthCredential phoneAuthCredential) async {
+          //This callback would be called when verification is done automatically
+          print(phoneAuthCredential);
+
+          AuthResult result =
+              await _auth.signInWithCredential(phoneAuthCredential);
+          FirebaseUser user = result.user;
+          FirebaseUser currentUser = await _auth.currentUser();
+          assert(user.uid == currentUser.uid);
+
+          if (user != null) {
+            print('Code auto retrieval successfull');
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UserProfile(
+                  cCode: countrycode,
+                  phoneNumber: phonenumber,
+                ),
+              ),
+            );
+          } else {
+            print('Error: user is null');
+          }
+        },
+        verificationFailed: (AuthException exception) {
+          print('Verification failed: ${exception.message}');
+        },
+      );
     } catch (e) {
       handleError(e);
     }
   }
 
   Future<bool> smsOTPDialog(BuildContext context) {
+    print('dialog box');
     return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Enter SMS Code'),
-            content: Container(
-              height: 85,
-              child: Column(children: [
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter SMS Code'),
+          content: Container(
+            height: 85,
+            child: Column(
+              children: [
                 TextField(
                   controller: _code,
                   decoration: InputDecoration(
@@ -89,38 +115,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         style: TextStyle(color: Colors.red),
                       )
                     : Container())
-              ]),
+              ],
             ),
-            contentPadding: EdgeInsets.all(10),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Register'),
-                onPressed: () {
-                  SharedUserData userdata = SharedUserData(
-                    countCode: countrycode,
-                    phoneNumbers: phonenumber,
-                  );
-                  _auth.currentUser().then((user) {
-                    if (user != null) {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserProfile(
-                            cCode: userdata.countCode,
-                            phoneNumber: userdata.phoneNumbers,
-                          ),
-                        ),
-                      );
-                    } else {
-                      signIn();
-                    }
-                  });
-                },
-              )
-            ],
-          );
-        });
+          ),
+          contentPadding: EdgeInsets.all(10),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Register'),
+              onPressed: () {
+                signIn();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   signIn() async {
@@ -129,14 +138,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
         verificationId: verificationId,
         smsCode: smsOTP,
       );
-      final FirebaseUser user =
-          await _auth.signInWithCredential(credential) as FirebaseUser;
+
+      AuthResult result = await _auth.signInWithCredential(credential);
+      FirebaseUser user = result.user;
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
-      Navigator.of(context).pop();
-      Navigator.of(context).pushReplacementNamed(UserProfile.id);
+
+      if (user != null) {
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UserProfile(
+              cCode: countrycode,
+              phoneNumber: phonenumber,
+            ),
+          ),
+        );
+      } else {
+        print('Error: user is null');
+      }
     } catch (e) {
-      handleError(e);
+      // handleError(e);
+      print('Exception: ${e.message}');
     }
   }
 
@@ -242,7 +266,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             decoration: InputDecoration(
                               errorText:
                                   _validate ? 'Value Can\'t Be Empty' : null,
-                              enabledBorder: OutlineInputBorder(
+                              border: OutlineInputBorder(
                                 borderRadius: const BorderRadius.all(
                                   const Radius.circular(10.0),
                                 ),
@@ -259,7 +283,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: kDividerLineGray,
                                 ),
                               ),
-                              hintText: '0123 1234567',
+                              hintText: '123 1234567',
                               labelText: 'Phone No.',
                             ),
                             onChanged: (value) {
@@ -324,26 +348,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   phoneNumbers: phonenumber,
                 );
 
-                _auth.currentUser().then((user) {
-                  if (user != null) {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserProfile(
-                          cCode: userdata.countCode,
-                          phoneNumber: userdata.phoneNumbers,
+                _auth.currentUser().then(
+                  (user) {
+                    if (user != null) {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProfile(
+                            cCode: userdata.countCode,
+                            phoneNumber: userdata.phoneNumbers,
+                          ),
                         ),
-                      ),
-                    );
-                  } else {
-                    signIn();
-                  }
-                });
+                      );
+                    } else {
+                      signIn();
+                    }
+                  },
+                );
 
-                setState(() {
-                  _text.text.isEmpty ? _validate = true : _validate = false;
-                });
+                setState(
+                  () {
+                    _text.text.isEmpty ? _validate = true : _validate = false;
+                  },
+                );
               },
             ),
           ),
