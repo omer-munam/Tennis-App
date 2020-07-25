@@ -74,7 +74,7 @@ class _TennisCourtState extends State<TennisCourt> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 NewGFields(
-                  labelText: 'Search Court Here',
+                  labelText: 'Search Court Here', controller: null,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(

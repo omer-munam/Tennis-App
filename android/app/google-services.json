@@ -1,63 +1,42 @@
 {
   "project_info": {
-    "project_number": "745992195100",
-    "firebase_url": "https://flash-chat-b601a.firebaseio.com",
-    "project_id": "flash-chat-b601a",
-    "storage_bucket": "flash-chat-b601a.appspot.com"
+    "project_number": "15448943181",
+    "firebase_url": "https://tennis-app-a1da5.firebaseio.com",
+    "project_id": "tennis-app-a1da5",
+    "storage_bucket": "tennis-app-a1da5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:745992195100:android:4099c45182892519cb63d9",
-        "android_client_info": {
-          "package_name": "pk.digit.flash_chat"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA66LhJWFMEOtmcbID-EGk_dCGaWcEbvjQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:745992195100:android:fc723a533d8c5675cb63d9",
+        "mobilesdk_app_id": "1:15448943181:android:1bb46750cc3593ccc80a04",
         "android_client_info": {
           "package_name": "pk.digit.tennis_event"
         }
       },
       "oauth_client": [
         {
-          "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
+          "client_id": "15448943181-mi2128f4660qr4madgnjolqu8534ls3i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pk.digit.tennis_event",
+            "certificate_hash": "f97d7c6e3d1f0a35104a1c7b3401919b5fb0d5ea"
+          }
+        },
+        {
+          "client_id": "15448943181-jnq6q5pgcqqbffq9isij0lvd5d18agcr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA66LhJWFMEOtmcbID-EGk_dCGaWcEbvjQ"
+          "current_key": "AIzaSyA1skNd70s4ASbLQ1Re_03chgKXVC-qrPo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "745992195100-0laktlo3iiodtis8jojgbhhc02v00841.apps.googleusercontent.com",
+              "client_id": "15448943181-jnq6q5pgcqqbffq9isij0lvd5d18agcr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

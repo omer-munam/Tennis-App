@@ -42,6 +42,9 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
+
+    print('Country code: ${widget.cCode}');
+    print('Phone No: ${widget.phoneNumber}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
