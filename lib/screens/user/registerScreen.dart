@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tennis_event/screens/user/userProfile.dart';
 import 'package:tennis_event/utilities/constants.dart';
-import 'package:tennis_event/utilities/sharedData.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
-import 'package:tennis_event/widgets/newGameField.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String id = 'register_screen';
@@ -28,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _text = TextEditingController();
   final _code = TextEditingController();
   bool _validate = false;
+  bool _codeValidate = false;
 
   @override
   void dispose() {
@@ -97,13 +96,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return AlertDialog(
           title: Text('Enter SMS Code'),
           content: Container(
-            height: 85,
+            height: 100,
             child: Column(
               children: [
                 TextField(
                   controller: _code,
                   decoration: InputDecoration(
-                    errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                    errorText: _codeValidate ? 'Value Can\'t Be Empty' : null, 
                   ),
                   onChanged: (value) {
                     this.smsOTP = value;
@@ -123,7 +122,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             FlatButton(
               child: Text('Register'),
               onPressed: () {
-                signIn();
+                setState(() {
+                  _code.text.isEmpty ? _codeValidate = true : _codeValidate = false;
+                  Navigator.of(context).pop();
+                  smsOTPDialog(context);
+                });
+                print(_codeValidate);
+                print(_code.text);
+                if(!_codeValidate){
+                  signIn();
+                }
               },
             )
           ],
@@ -159,8 +167,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         print('Error: user is null');
       }
     } catch (e) {
-      // handleError(e);
-      print('Exception: ${e.message}');
+      // print('Exception: ${e.message}');
+      handleError(e);
     }
   }
 
@@ -255,7 +263,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                Expanded(
+                Container(
                   child: Row(
                     children: [
                       Expanded(
@@ -293,29 +301,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                            side: BorderSide(color: kMainThemeColor),
-                          ),
-                          color: Colors.white,
-                          child: Text(
-                            'Verify',
-                          ),
-                          onPressed: () {
-                            print(countrycode + phonenumber);
-                            this.phoneNo = countrycode + phonenumber;
-                            print(phoneNo);
-                            print(this.phoneNo);
-                            verifyPhone();
-                          },
-                        ),
-                      ),
+                      // SizedBox(
+                      //   width: 10.0,
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(10.0),
+                      //   child: RaisedButton(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(25.0),
+                      //       side: BorderSide(color: kMainThemeColor),
+                      //     ),
+                      //     color: Colors.white,
+                      //     child: Text(
+                      //       'Verify',
+                      //     ),
+                      //     onPressed: () {
+                      //       print(countrycode + phonenumber);
+                      //       this.phoneNo = countrycode + phonenumber;
+                      //       print(phoneNo);
+                      //       print(this.phoneNo);
+                      //       verifyPhone();
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -323,55 +331,62 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           SizedBox(
-            height: 25.0,
+            height: 80,
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 50,
-              ),
-              child: NewGFields(
-                controller: _controller2,
-                onchange: (value) {
-                  this.smsOTP = value;
-                },
-                labelText: 'Enter Code',
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(
+          //       top: 50,
+          //     ),
+          //     child: NewGFields(
+          //       controller: _controller2,
+          //       onchange: (value) {
+          //         this.smsOTP = value;
+          //       },
+          //       labelText: 'Enter Code',
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: BottomButton(
               buttonTitle: 'Register',
               tapping: () {
-                SharedUserData userdata = SharedUserData(
-                  countCode: countrycode,
-                  phoneNumbers: phonenumber,
-                );
-
-                _auth.currentUser().then(
-                  (user) {
-                    if (user != null) {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserProfile(
-                            cCode: userdata.countCode,
-                            phoneNumber: userdata.phoneNumbers,
-                          ),
-                        ),
-                      );
-                    } else {
-                      signIn();
-                    }
-                  },
-                );
-
                 setState(
                   () {
                     _text.text.isEmpty ? _validate = true : _validate = false;
                   },
                 );
+                print(_validate);
+                // if (_validate) {
+                  print(countrycode + phonenumber);
+                  this.phoneNo = countrycode + phonenumber;
+                  print(phoneNo);
+                  print(this.phoneNo);
+                  verifyPhone();
+                  // SharedUserData userdata = SharedUserData(
+                  //   countCode: countrycode,
+                  //   phoneNumbers: phonenumber,
+                  // );
+
+                  // _auth.currentUser().then(
+                  //   (user) {
+                  //     if (user != null) {
+                  //       Navigator.of(context).pop();
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => UserProfile(
+                  //             cCode: userdata.countCode,
+                  //             phoneNumber: userdata.phoneNumbers,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     } else {
+                  //       signIn();
+                  //     }
+                  // },
+                  // );
+                // }
               },
             ),
           ),
