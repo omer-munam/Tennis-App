@@ -28,6 +28,8 @@
 .packages
 .pub-cache/
 .pub/
+.flutter-plugins
+.flutter-plugins-dependencies
 /build/
 
 # Web related
@@ -41,6 +43,4 @@ lib/generated_plugin_registrant.dart
 *.js_
 *.js.deps
 *.js.map
-.flutter-plugins
-.flutter-plugins-dependencies
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
