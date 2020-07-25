@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
   String userName;
   String gender;
@@ -5,11 +7,22 @@ class User {
   String playLevel;
   String side;
   int phoneNumber;
-  String img;
+  String image;
   String cCode;
 
   User(this.userName, this.gender, this.yearOfBirth, this.playLevel, this.side,
-      this.phoneNumber, this.img, this.cCode);
+      this.phoneNumber, this.image, this.cCode);
+
+  User.fromSnapshot(DocumentSnapshot snapshot) {
+    userName = snapshot.data['userName'];
+    gender = snapshot.data['gender'];
+    yearOfBirth = snapshot.data['yearOfBirth'];
+    playLevel = snapshot.data['playLevel'];
+    side = snapshot.data['side'];
+    phoneNumber = snapshot.data['phoneNumber'];
+    image = snapshot.data['image'];
+    cCode = snapshot.data['cCode'];
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -19,7 +32,7 @@ class User {
       'playLevel': playLevel,
       'side': side,
       'phoneNumber': phoneNumber,
-      'image': img,
+      'image': image,
       'countryCode': cCode,
     };
   }
