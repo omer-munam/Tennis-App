@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/user.dart';
 
 class DatabaseService {
@@ -12,6 +13,22 @@ class DatabaseService {
   //collection reference
   final CollectionReference _usersCollectionReference =
       Firestore.instance.collection("users");
+
+  final CollectionReference _courtsCollectionReference =
+      Firestore.instance.collection("courts");
+
+  Future<Court> createCourt(Court court) async {
+    try {
+      await _courtsCollectionReference.add(court.toJson()).then((value) => {
+            _courtsCollectionReference
+                .document(value.documentID)
+                .updateData({"id": value.documentID})
+          });
+      return court;
+    } catch (e) {
+      print(e.message);
+    }
+  }
 
   Future<User> createUser(User user) async {
     try {
