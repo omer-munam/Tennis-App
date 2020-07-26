@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Court {
   String id;
   String courtname;
   String street;
   String postalcode;
+  String country;
   String city;
   String telephone;
   String email;
@@ -13,6 +15,7 @@ class Court {
     this.courtname,
     this.street,
     this.postalcode,
+    this.country,
     this.city,
     this.telephone,
     this.email,
@@ -20,6 +23,7 @@ class Court {
 
   Court.fromSnapshot(DocumentSnapshot snapshot) {
     id = snapshot.data['id'];
+    country = snapshot.data['country'];
     courtname = snapshot.data['courtname'];
     street = snapshot.data['street'];
     postalcode = snapshot.data['postalcode'];
@@ -31,6 +35,7 @@ class Court {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'country': country,
       'courtname': courtname,
       'street': street,
       'postalcode': postalcode,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Widgets/newGameField.dart';
 import 'package:tennis_event/screens/game/gameDetail.dart';
 import 'package:tennis_event/utilities/constants.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
+import 'package:tennis_event/services/database.dart';
 
 class NewTennisCourt extends StatefulWidget {
   static const String id = 'new_tennis_court_screen';
@@ -19,6 +21,7 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
   String city;
   String phone;
   String email;
+  DatabaseService _db = new DatabaseService();
 
   TextEditingController _controller1,
       _controller2,
@@ -110,17 +113,46 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
             BottomButton(
               buttonTitle: 'Submit',
               tapping: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GameDetails(),
-                  ),
-                );
+                if (_controller1.text == "" ||
+                    _controller2.text == "" ||
+                    _controller3.text == "" ||
+                    _controller4.text == "" ||
+                    _controller5.text == "" ||
+                    _controller6.text == "" ||
+                    _controller7.text == "") {
+                  print("All Fields Are Mandatory");
+                  return;
+                }
+                Court court = new Court(
+                    courtname: _controller1.text,
+                    street: _controller3.text,
+                    postalcode: _controller4.text,
+                    country: _controller2.text,
+                    city: _controller5.text,
+                    telephone: _controller6.text,
+                    email: _controller7.text);
+                createCourt(court, context);
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void createCourt(Court court, BuildContext context1) async {
+    print(court.toJson());
+    dynamic result = await _db.createCourt(court);
+
+    if (result == null) {
+      print("Error Adding Court");
+    } else {
+      Navigator.push(
+        context1,
+        MaterialPageRoute(
+          builder: (context) => GameDetails(),
+        ),
+      );
+    }
   }
 }
