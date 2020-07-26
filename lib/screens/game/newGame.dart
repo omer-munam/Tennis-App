@@ -1,12 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_field/date_field.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_event/models/game.dart';
 import 'package:tennis_event/screens/game/gameDetail.dart';
+import 'package:tennis_event/screens/user/userGames.dart';
+import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
 import 'package:tennis_event/widgets/newGameField.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NewGames extends StatefulWidget {
   static const String id = 'new_games_screen';
@@ -16,12 +22,18 @@ class NewGames extends StatefulWidget {
 
 class _NewGameState extends State<NewGames> {
   int _selectedIndex = 2;
-  DateTime selectedData;
+  DateTime selectedDate;
   String chooseCourt;
   String gameType;
   String currency;
+  bool isTournament;
   String tournament;
-  final formatTime = DateFormat("HH:mm");
+  final formatTime = DateFormat.jm();
+  DateTime timeSelected;
+  FirebaseAuth _auth;
+  FirebaseUser currentUser;
+  bool loading = false;
+  DatabaseService _databaseService = DatabaseService();
 
   TextEditingController _controller1, _controller2, _controller3, _controller4;
 
@@ -63,6 +75,9 @@ class _NewGameState extends State<NewGames> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: 8,
+            ),
             NewGFields(
               controller: _controller1,
               labelText: 'Game Name',
@@ -87,10 +102,10 @@ class _NewGameState extends State<NewGames> {
                 ),
                 onDateSelected: (DateTime value) {
                   setState(() {
-                    selectedData = value;
+                    selectedDate = value;
                   });
                 },
-                selectedDate: selectedData,
+                selectedDate: selectedDate,
               ),
             ),
             Padding(
@@ -119,7 +134,8 @@ class _NewGameState extends State<NewGames> {
                     initialTime:
                         TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
                   );
-                  return DateTimeField.convert(time);
+                  timeSelected = DateTimeField.convert(time);
+                  return timeSelected;
                 },
               ),
             ),
@@ -222,7 +238,12 @@ class _NewGameState extends State<NewGames> {
                   onChanged: (String newtournament) {
                     setState(() {
                       tournament = newtournament;
-                      print(newtournament);
+                      if (newtournament == 'Yes') {
+                        isTournament = true;
+                      } else {
+                        isTournament = false;
+                      }
+                      print('Tournament: $isTournament');
                     });
                   },
                 ),
@@ -285,13 +306,69 @@ class _NewGameState extends State<NewGames> {
             ),
             BottomButton(
               buttonTitle: 'Create Game',
-              tapping: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GameDetails(),
-                  ),
+              tapping: () async {
+                if (_controller1.text == "" ||
+                    selectedDate == null ||
+                    formatTime == null ||
+                    chooseCourt == null ||
+                    gameType == null ||
+                    isTournament == null ||
+                    currency == null ||
+                    _controller4.text == "" ||
+                    _controller2.text == "") {
+                  print("All Fields Mandatory");
+                  return;
+                }
+
+                _auth = FirebaseAuth.instance;
+                currentUser = await _auth.currentUser();
+
+                print('formatTime: ${_controller3.text}');
+                print('timeSelected: $timeSelected');
+                print('selectedDate: $selectedDate');
+
+                selectedDate = DateTime(
+                  selectedDate.year,
+                  selectedDate.month,
+                  selectedDate.day,
+                  timeSelected.hour,
+                  timeSelected.minute,
+                  timeSelected.second,
+                  timeSelected.millisecond,
+                  timeSelected.microsecond,
                 );
+
+                Game game = Game(
+                  name: _controller1.text,
+                  courtLocation: chooseCourt,
+                  type: gameType,
+                  tournament: isTournament,
+                  currency: currency,
+                  price: _controller4.text,
+                  notes: _controller2.text,
+                  organizerId: currentUser.uid,
+                  time: Timestamp.fromDate(selectedDate),
+                );
+
+                setState(() => loading = true);
+                dynamic result = await _databaseService.createGame(game);
+                if (result == null) {
+                  print('Error Registering..');
+                  setState(() => loading = false);
+                } else {
+                  print(result);
+                  Fluttertoast.showToast(
+                    msg: 'New Game Created',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyGames(),
+                    ),
+                  );
+                }
               },
             ),
           ],
