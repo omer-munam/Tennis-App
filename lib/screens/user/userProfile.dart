@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tennis_event/Models/user.dart';
 import 'package:tennis_event/screens/settings.dart';
 import 'package:tennis_event/services/database.dart';
@@ -9,6 +12,7 @@ import 'package:tennis_event/utilities/constants.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
 import 'package:tennis_event/widgets/bottomMenuBar.dart';
+import 'package:path/path.dart';
 import 'package:tennis_event/widgets/newGameField.dart';
 
 class UserProfile extends StatefulWidget {
@@ -29,6 +33,9 @@ class _UserProfileState extends State<UserProfile> {
   String myLevel;
   String side;
   String username;
+  String image = 'assets/images/playerImage.png';
+  final picker = ImagePicker();
+  File _image;
   TextEditingController _controller1, _controller2;
   DatabaseService _databaseService = DatabaseService();
 
@@ -80,9 +87,12 @@ class _UserProfileState extends State<UserProfile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CircleAvatar(
-              radius: 50.0,
-              backgroundImage: AssetImage('assets/images/playerImage.png'),
+            GestureDetector(
+              onTap: () {
+                getImage();
+              },
+              child: CircleAvatar(
+                  radius: 50.0, backgroundImage: AssetImage(image)),
             ),
             NewGFields(
               onchange: username,
@@ -296,7 +306,7 @@ class _UserProfileState extends State<UserProfile> {
                     phoneNumber: widget.phoneNumber,
                     cCode: widget.cCode,
                     side: side);
-                signUp(user);
+                signUp(user, context);
               },
             ),
           ],
@@ -305,13 +315,26 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  void signUp(User user) async {
+  Future getImage() async {
+    // get image from gallery and assign it to img
+    final img = await picker.getImage(source: ImageSource.gallery);
+
+    // updating state
+    setState(() {
+      _image = File(img.path);
+      image = img.path;
+    });
+  }
+
+  void signUp(User user, BuildContext context1) async {
+    user.image =
+        await _databaseService.uploadImage(basename(_image.path), _image);
     dynamic result = await _databaseService.createUser(user);
     if (result == null) {
       print('Error Registering..');
     } else {
       Navigator.pushReplacement(
-        context,
+        context1,
         MaterialPageRoute(
           builder: (context) => BottomMenuBar(),
         ),
