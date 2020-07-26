@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Widgets/newGameField.dart';
 import 'package:tennis_event/screens/game/gameDetail.dart';
 import 'package:tennis_event/utilities/constants.dart';
+import 'package:tennis_event/utilities/loader.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
 import 'package:tennis_event/services/database.dart';
@@ -22,6 +24,7 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
   String phone;
   String email;
   DatabaseService _db = new DatabaseService();
+  bool loading = false;
 
   TextEditingController _controller1,
       _controller2,
@@ -55,89 +58,94 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        backgroundColor: kMainThemeColor,
-        centerTitle: true,
-        title: Text(
-          'Add New Tennis Court',
-          style: kAppbarStyle,
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            NewGFields(
-              controller: _controller1,
-              labelText: 'Court Name',
-              onchange: courtName,
+    return loading
+        ? Loading()
+        : Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              backgroundColor: kMainThemeColor,
+              centerTitle: true,
+              title: Text(
+                'Add New Tennis Court',
+                style: kAppbarStyle,
+              ),
             ),
-            NewGFields(
-              controller: _controller2,
-              labelText: 'Country',
-              onchange: country,
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  NewGFields(
+                    controller: _controller1,
+                    labelText: 'Court Name',
+                    onchange: courtName,
+                  ),
+                  NewGFields(
+                    controller: _controller2,
+                    labelText: 'Country',
+                    onchange: country,
+                  ),
+                  NewGFields(
+                    controller: _controller3,
+                    labelText: 'Street',
+                    onchange: street,
+                  ),
+                  NewGFields(
+                    controller: _controller4,
+                    labelText: 'Postal',
+                    onchange: postal,
+                  ),
+                  NewGFields(
+                    controller: _controller5,
+                    labelText: 'City',
+                    onchange: city,
+                  ),
+                  NewGFields(
+                    controller: _controller6,
+                    labelText: 'Phone No.',
+                    onchange: phone,
+                  ),
+                  NewGFields(
+                    controller: _controller7,
+                    labelText: 'Email',
+                    onchange: email,
+                  ),
+                  BottomButton(
+                    buttonTitle: 'Submit',
+                    tapping: () {
+                      if (_controller1.text == "" ||
+                          _controller2.text == "" ||
+                          _controller3.text == "" ||
+                          _controller4.text == "" ||
+                          _controller5.text == "" ||
+                          _controller6.text == "" ||
+                          _controller7.text == "") {
+                        print("All Fields Are Mandatory");
+                        return;
+                      }
+                      setState(() => loading = true);
+
+                      Court court = new Court(
+                          courtname: _controller1.text,
+                          street: _controller3.text,
+                          postalcode: _controller4.text,
+                          country: _controller2.text,
+                          city: _controller5.text,
+                          telephone: _controller6.text,
+                          email: _controller7.text);
+
+                      createCourt(court, context);
+                    },
+                  ),
+                ],
+              ),
             ),
-            NewGFields(
-              controller: _controller3,
-              labelText: 'Street',
-              onchange: street,
-            ),
-            NewGFields(
-              controller: _controller4,
-              labelText: 'Postal',
-              onchange: postal,
-            ),
-            NewGFields(
-              controller: _controller5,
-              labelText: 'City',
-              onchange: city,
-            ),
-            NewGFields(
-              controller: _controller6,
-              labelText: 'Phone No.',
-              onchange: phone,
-            ),
-            NewGFields(
-              controller: _controller7,
-              labelText: 'Email',
-              onchange: email,
-            ),
-            BottomButton(
-              buttonTitle: 'Submit',
-              tapping: () {
-                if (_controller1.text == "" ||
-                    _controller2.text == "" ||
-                    _controller3.text == "" ||
-                    _controller4.text == "" ||
-                    _controller5.text == "" ||
-                    _controller6.text == "" ||
-                    _controller7.text == "") {
-                  print("All Fields Are Mandatory");
-                  return;
-                }
-                Court court = new Court(
-                    courtname: _controller1.text,
-                    street: _controller3.text,
-                    postalcode: _controller4.text,
-                    country: _controller2.text,
-                    city: _controller5.text,
-                    telephone: _controller6.text,
-                    email: _controller7.text);
-                createCourt(court, context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   void createCourt(Court court, BuildContext context1) async {
@@ -146,7 +154,13 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
 
     if (result == null) {
       print("Error Adding Court");
+      setState(() => loading = false);
     } else {
+      Fluttertoast.showToast(
+        msg: 'New Court Created',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
       Navigator.push(
         context1,
         MaterialPageRoute(
