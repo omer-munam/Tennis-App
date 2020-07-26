@@ -1,69 +1,62 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Game {
-  List player = [];
+  String id;
+  String name;
+  List<String> players;
   String organizerId;
-  String gameId;
-  String gameName;
   String courtLocation;
-  String gameType;
+  String type;
   String currency;
-  String price;
+  int price;
   bool tournament;
   bool booked;
-  DateTime date;
   Timestamp time;
-  String organizer;
   String result;
 
-  Game(
-      this.player,
-      this.organizerId,
-      this.gameId,
-      this.gameName,
-      this.courtLocation,
-      this.gameType,
-      this.currency,
-      this.price,
-      this.tournament,
-      this.booked,
-      this.date,
-      this.time,
-      this.organizer,
-      this.result);
+  Game({
+    this.id,
+    this.name,
+    this.players,
+    this.organizerId,
+    this.courtLocation,
+    this.type,
+    this.currency,
+    this.price,
+    this.tournament,
+    this.booked,
+    this.time,
+    this.result,
+  });
 
   Game.fromSnapshot(DocumentSnapshot snapshot) {
-    player = snapshot.data['player'];
+    id = snapshot.data['id'];
+    name = snapshot.data['name'];
+    players = List.from(snapshot.data['players']);
     organizerId = snapshot.data['organizerId'];
-    gameId = snapshot.data['gameId'];
-    gameName = snapshot.data['gameName'];
     courtLocation = snapshot.data['courtLocation'];
-    gameType = snapshot.data['gameType'];
+    type = snapshot.data['type'];
     currency = snapshot.data['currency'];
     price = snapshot.data['price'];
     tournament = snapshot.data['tournament'];
     booked = snapshot.data['booked'];
-    date = snapshot.data['date'];
     time = snapshot.data['time'];
-    organizer = snapshot.data['organizer'];
     result = snapshot.data['result'];
   }
 
-   Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
-      'player': player,
+      'id': id,
+      'name': name,
+      'players': players,
       'organizerId': organizerId,
-      'gameId': gameId,
-      'gameName': gameName,
       'courtLocation': courtLocation,
-      'gameType': gameType,
+      'type': type,
       'currency': currency,
       'price': price,
       'tournament': tournament,
       'booked': booked,
-      'date': date,
       'time': time,
-      'organizer': organizer,
       'result': result,
     };
   }
