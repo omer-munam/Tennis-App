@@ -1,8 +1,4 @@
-import 'dart:ffi';
 import 'dart:io';
-
-import 'package:country_list_pick/country_list_pick.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +7,7 @@ import 'package:tennis_event/Models/user.dart';
 import 'package:tennis_event/screens/settings.dart';
 import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
+import 'package:tennis_event/utilities/loader.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
 import 'package:tennis_event/widgets/bottomMenuBar.dart';
@@ -39,6 +36,7 @@ class _UserProfileState extends State<UserProfile> {
   File image;
   final picker = ImagePicker();
   File _image;
+  bool loading = false;
   TextEditingController _controller1, _controller2;
   DatabaseService _databaseService = DatabaseService();
 
@@ -59,268 +57,272 @@ class _UserProfileState extends State<UserProfile> {
     print('Country code: ${widget.cCode}');
     print('Phone No: ${widget.phoneNumber}');
     print(widget.uidUser);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.settings,
-            ),
-            tooltip: 'Settings Page',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Settings(),
-                ),
-              );
-            },
-          ),
-        ],
-        backgroundColor: kMainThemeColor,
-        centerTitle: true,
-        title: Text(
-          'Profile',
-          style: kAppbarStyle,
-        ),
-      ),
-      body: SingleChildScrollView(
-        reverse: false,
-        scrollDirection: Axis.vertical,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                getImage();
-              },
-              child: CircleAvatar(
-                  radius: 50.0,
-                  backgroundImage: image == null
-                      ? AssetImage('assets/images/playerImage.png')
-                      : FileImage(image)),
-            ),
-            NewGFields(
-              onchange: username,
-              controller: _controller1,
-              labelText: 'Username',
-            ),
-            // Padding(
-            //   padding:
-            //       const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-            //   child: Container(
-            //     padding: EdgeInsets.symmetric(horizontal: 16.0),
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(10),
-            //       border: Border.all(
-            //           width: 2.0,
-            //           color: kDividerLineGray,
-            //           style: BorderStyle.solid),
-            //     ),
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.stretch,
-            //       children: [
-            //         CountryListPick(
-            //           isShowFlag: true,
-            //           isShowTitle: true,
-            //           isDownIcon: true,
-            //           showEnglishName: true,
-            //           onChanged: (CountryCode code) {
-            //             code = widget.cCode as CountryCode;
-            //           },
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 2.0,
-                    color: kDividerLineGray,
-                    style: BorderStyle.solid,
+    return loading
+        ? Loading()
+        : Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.settings,
                   ),
-                ),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: side,
-                  items: <String>[
-                    'Choose Side',
-                    'Left Sided',
-                    'Right Sided',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value != 'Choose Side' ? value : null,
-                      child: Text(value),
+                  tooltip: 'Settings Page',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Settings(),
+                      ),
                     );
-                  }).toList(),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      side = newValue;
-                      print(newValue);
-                    });
                   },
                 ),
+              ],
+              backgroundColor: kMainThemeColor,
+              centerTitle: true,
+              title: Text(
+                'Profile',
+                style: kAppbarStyle,
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 2.0,
-                    color: kDividerLineGray,
-                    style: BorderStyle.solid,
+            body: SingleChildScrollView(
+              reverse: false,
+              scrollDirection: Axis.vertical,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      getImage();
+                    },
+                    child: CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage: image == null
+                            ? AssetImage('assets/images/playerImage.png')
+                            : FileImage(image)),
                   ),
-                ),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: myLevel,
-                  items: <String>[
-                    'Choose Play Level',
-                    'Beginner',
-                    'Intermediate',
-                    'Professional',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value != 'Choose Play Level' ? value : null,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      myLevel = newValue;
-                      print(newValue);
-                    });
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 2.0,
-                    color: kDividerLineGray,
-                    style: BorderStyle.solid,
+                  NewGFields(
+                    onchange: username,
+                    controller: _controller1,
+                    labelText: 'Username',
                   ),
-                ),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: myGender,
-                  items: <String>[
-                    'Choose Gender',
-                    'Male',
-                    'Female',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value != 'Choose Gender' ? value : null,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String newgender) {
-                    setState(() {
-                      myGender = newgender;
-                      print(newgender);
-                    });
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 2.0,
-                    color: kDividerLineGray,
-                    style: BorderStyle.solid,
+                  // Padding(
+                  //   padding:
+                  //       const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                  //   child: Container(
+                  //     padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       border: Border.all(
+                  //           width: 2.0,
+                  //           color: kDividerLineGray,
+                  //           style: BorderStyle.solid),
+                  //     ),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.stretch,
+                  //       children: [
+                  //         CountryListPick(
+                  //           isShowFlag: true,
+                  //           isShowTitle: true,
+                  //           isDownIcon: true,
+                  //           showEnglishName: true,
+                  //           onChanged: (CountryCode code) {
+                  //             code = widget.cCode as CountryCode;
+                  //           },
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 5.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 2.0,
+                          color: kDividerLineGray,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: side,
+                        items: <String>[
+                          'Choose Side',
+                          'Left Sided',
+                          'Right Sided',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value != 'Choose Side' ? value : null,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            side = newValue;
+                            print(newValue);
+                          });
+                        },
+                      ),
+                    ),
                   ),
-                ),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: myYob,
-                  items: <String>[
-                    'Choose Year of Birth',
-                    '1990',
-                    '1991',
-                    '1992',
-                    '1993',
-                    '1994',
-                    '1995',
-                    '1996',
-                    '1997',
-                    '1998',
-                    '1999',
-                    '2001',
-                    '2002',
-                    '2003',
-                    '2004',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value != 'Choose Year of Birth' ? value : null,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String newYob) {
-                    setState(() {
-                      myYob = newYob;
-                      print(newYob);
-                    });
-                  },
-                ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 5.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 2.0,
+                          color: kDividerLineGray,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: myLevel,
+                        items: <String>[
+                          'Choose Play Level',
+                          'Beginner',
+                          'Intermediate',
+                          'Professional',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value != 'Choose Play Level' ? value : null,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            myLevel = newValue;
+                            print(newValue);
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 5.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 2.0,
+                          color: kDividerLineGray,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: myGender,
+                        items: <String>[
+                          'Choose Gender',
+                          'Male',
+                          'Female',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value != 'Choose Gender' ? value : null,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String newgender) {
+                          setState(() {
+                            myGender = newgender;
+                            print(newgender);
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 5.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 2.0,
+                          color: kDividerLineGray,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: myYob,
+                        items: <String>[
+                          'Choose Year of Birth',
+                          '1990',
+                          '1991',
+                          '1992',
+                          '1993',
+                          '1994',
+                          '1995',
+                          '1996',
+                          '1997',
+                          '1998',
+                          '1999',
+                          '2001',
+                          '2002',
+                          '2003',
+                          '2004',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value:
+                                value != 'Choose Year of Birth' ? value : null,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String newYob) {
+                          setState(() {
+                            myYob = newYob;
+                            print(newYob);
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  // NewGFields(
+                  //   onchange: () {
+                  //     widget.phoneNumber;
+                  //   },
+                  //   controller: _controller2,
+                  //   labelText: 'Phone Number',
+                  // ),
+                  BottomButton(
+                    buttonTitle: 'Save',
+                    tapping: () {
+                      if (_controller1.text == "" ||
+                          myGender == null ||
+                          myYob == null ||
+                          myLevel == null ||
+                          side == null ||
+                          _image == null) {
+                        print("All Fields Mandatory");
+                        return;
+                      }
+                      User user = new User(
+                          id: widget.uidUser,
+                          userName: _controller1.text,
+                          gender: myGender,
+                          yearOfBirth: myYob,
+                          playLevel: myLevel,
+                          phoneNumber: widget.phoneNumber,
+                          cCode: widget.cCode,
+                          side: side);
+                      signUp(user, context);
+                    },
+                  ),
+                ],
               ),
             ),
-            // NewGFields(
-            //   onchange: () {
-            //     widget.phoneNumber;
-            //   },
-            //   controller: _controller2,
-            //   labelText: 'Phone Number',
-            // ),
-            BottomButton(
-              buttonTitle: 'Save',
-              tapping: () {
-                if (_controller1.text == "" ||
-                    myGender == null ||
-                    myYob == null ||
-                    myLevel == null ||
-                    side == null) {
-                  print("All Fields Mandatory");
-                  return;
-                }
-                User user = new User(
-                    id: widget.uidUser,
-                    userName: _controller1.text,
-                    gender: myGender,
-                    yearOfBirth: myYob,
-                    playLevel: myLevel,
-                    phoneNumber: widget.phoneNumber,
-                    cCode: widget.cCode,
-                    side: side);
-                signUp(user, context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Future getImage() async {
@@ -335,14 +337,18 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   void signUp(User user, BuildContext context1) async {
+    setState(() => loading = true);
     user.image =
         await _databaseService.uploadImage(basename(_image.path), _image);
     dynamic result = await _databaseService.createUser(user);
     if (result == null) {
       print('Error Registering..');
+      setState(() => loading = false);
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isLoggedIn', true);
+      Navigator.pop(context1);
+      Navigator.pop(context1);
       Navigator.pushReplacement(
         context1,
         MaterialPageRoute(
