@@ -170,7 +170,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         print('Error: user is null');
       }
     } catch (e) {
-      // print('Exception: ${e.message}');
       handleError(e);
     }
   }
@@ -294,7 +293,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: kDividerLineGray,
                                 ),
                               ),
-                              hintText: '123 1234567',
+                              hintText: '1234567890',
                               labelText: 'Phone No.',
                             ),
                             onChanged: (value) {
