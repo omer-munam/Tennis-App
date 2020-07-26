@@ -17,10 +17,10 @@ class NewGames extends StatefulWidget {
 class _NewGameState extends State<NewGames> {
   int _selectedIndex = 2;
   DateTime selectedData;
-  String chooseCourt = 'Choose Court';
-  String gameType = 'Choose Game Type';
-  String currency = 'Choose Currency';
-  String tournament = 'Tournament';
+  String chooseCourt;
+  String gameType;
+  String currency;
+  String tournament;
   final formatTime = DateFormat("HH:mm");
 
   TextEditingController _controller1, _controller2, _controller3, _controller4;
@@ -275,7 +275,6 @@ class _NewGameState extends State<NewGames> {
                   child: NewGFields(
                     controller: _controller4,
                     labelText: 'Price',
-                    
                   ),
                 )
               ],
@@ -283,7 +282,6 @@ class _NewGameState extends State<NewGames> {
             NewGFields(
               controller: _controller2,
               labelText: 'Notes',
-              
             ),
             BottomButton(
               buttonTitle: 'Create Game',
