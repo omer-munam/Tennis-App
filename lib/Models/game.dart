@@ -8,7 +8,7 @@ class Game {
   String courtLocation;
   String type;
   String currency;
-  int price;
+  String price;
   bool tournament;
   bool booked;
   Timestamp time;

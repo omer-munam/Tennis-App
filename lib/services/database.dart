@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/user.dart';
+import 'package:tennis_event/models/game.dart';
 
 class DatabaseService {
   final String userId;
@@ -14,17 +15,37 @@ class DatabaseService {
   final CollectionReference _usersCollectionReference =
       Firestore.instance.collection("users");
 
+  final CollectionReference _gamesCollectionReference =
+      Firestore.instance.collection("games");
+
   final CollectionReference _courtsCollectionReference =
       Firestore.instance.collection("courts");
 
   Future<Court> createCourt(Court court) async {
     try {
-      await _courtsCollectionReference.add(court.toJson()).then((value) => {
-            _courtsCollectionReference
-                .document(value.documentID)
-                .updateData({"id": value.documentID})
-          });
+      await _courtsCollectionReference.add(court.toJson()).then(
+            (value) => {
+              _courtsCollectionReference
+                  .document(value.documentID)
+                  .updateData({"id": value.documentID})
+            },
+          );
       return court;
+    } catch (e) {
+      print(e.message);
+    }
+  }
+
+  Future<Game> createGame(Game game) async {
+    try {
+      await _gamesCollectionReference.add(game.toJson()).then(
+            (value) => {
+              _gamesCollectionReference
+                  .document(value.documentID)
+                  .updateData({"id": value.documentID})
+            },
+          );
+      return game;
     } catch (e) {
       print(e.message);
     }
