@@ -145,7 +145,7 @@ class _NewGameState extends State<NewGames> {
                     'Location 2',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: value != 'Choose Court' ? value : null,
                       child: Text(value),
                     );
                   }).toList(),
@@ -180,7 +180,7 @@ class _NewGameState extends State<NewGames> {
                     'Double',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: value != 'Choose Game Type' ? value : null,
                       child: Text(value),
                     );
                   }).toList(),
@@ -215,7 +215,7 @@ class _NewGameState extends State<NewGames> {
                     'No',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: value != 'Choose Tournament' ? value : null,
                       child: Text(value),
                     );
                   }).toList(),
@@ -257,7 +257,7 @@ class _NewGameState extends State<NewGames> {
                           'INR',
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
-                            value: value,
+                            value: value != 'Choose Currency' ? value : null,
                             child: Text(value),
                           );
                         }).toList(),
@@ -275,6 +275,7 @@ class _NewGameState extends State<NewGames> {
                   child: NewGFields(
                     controller: _controller4,
                     labelText: 'Price',
+                    
                   ),
                 )
               ],
@@ -282,6 +283,7 @@ class _NewGameState extends State<NewGames> {
             NewGFields(
               controller: _controller2,
               labelText: 'Notes',
+              
             ),
             BottomButton(
               buttonTitle: 'Create Game',
