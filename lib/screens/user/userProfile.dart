@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:country_list_pick/country_list_pick.dart';
@@ -5,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tennis_event/Models/user.dart';
 import 'package:tennis_event/screens/settings.dart';
 import 'package:tennis_event/services/database.dart';
@@ -20,8 +22,9 @@ class UserProfile extends StatefulWidget {
 
   final String cCode;
   final String phoneNumber;
+  final String uidUser;
 
-  UserProfile({this.cCode, this.phoneNumber});
+  UserProfile({this.uidUser, this.cCode, this.phoneNumber});
 
   @override
   _UserProfileState createState() => _UserProfileState();
@@ -33,7 +36,7 @@ class _UserProfileState extends State<UserProfile> {
   String myLevel;
   String side;
   String username;
-  String image = 'assets/images/playerImage.png';
+  File image;
   final picker = ImagePicker();
   File _image;
   TextEditingController _controller1, _controller2;
@@ -55,6 +58,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     print('Country code: ${widget.cCode}');
     print('Phone No: ${widget.phoneNumber}');
+    print(widget.uidUser);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -92,7 +96,10 @@ class _UserProfileState extends State<UserProfile> {
                 getImage();
               },
               child: CircleAvatar(
-                  radius: 50.0, backgroundImage: AssetImage(image)),
+                  radius: 50.0,
+                  backgroundImage: image == null
+                      ? AssetImage('assets/images/playerImage.png')
+                      : FileImage(image)),
             ),
             NewGFields(
               onchange: username,
@@ -299,6 +306,7 @@ class _UserProfileState extends State<UserProfile> {
                   return;
                 }
                 User user = new User(
+                    id: widget.uidUser,
                     userName: _controller1.text,
                     gender: myGender,
                     yearOfBirth: myYob,
@@ -322,7 +330,7 @@ class _UserProfileState extends State<UserProfile> {
     // updating state
     setState(() {
       _image = File(img.path);
-      image = img.path;
+      image = File(img.path);
     });
   }
 
@@ -333,6 +341,8 @@ class _UserProfileState extends State<UserProfile> {
     if (result == null) {
       print('Error Registering..');
     } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
       Navigator.pushReplacement(
         context1,
         MaterialPageRoute(

@@ -69,9 +69,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => UserProfile(
-                  cCode: countrycode,
-                  phoneNumber: phonenumber,
-                ),
+                    cCode: countrycode,
+                    phoneNumber: phonenumber,
+                    uidUser: user.uid),
               ),
             );
           } else {
@@ -102,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextField(
                   controller: _code,
                   decoration: InputDecoration(
-                    errorText: _codeValidate ? 'Value Can\'t Be Empty' : null, 
+                    errorText: _codeValidate ? 'Value Can\'t Be Empty' : null,
                   ),
                   onChanged: (value) {
                     this.smsOTP = value;
@@ -123,13 +123,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Text('Register'),
               onPressed: () {
                 setState(() {
-                  _code.text.isEmpty ? _codeValidate = true : _codeValidate = false;
+                  _code.text.isEmpty
+                      ? _codeValidate = true
+                      : _codeValidate = false;
                   Navigator.of(context).pop();
                   smsOTPDialog(context);
                 });
                 print(_codeValidate);
                 print(_code.text);
-                if(!_codeValidate){
+                if (!_codeValidate) {
                   signIn();
                 }
               },
@@ -160,6 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             builder: (context) => UserProfile(
               cCode: countrycode,
               phoneNumber: phonenumber,
+              uidUser: currentUser.uid,
             ),
           ),
         );
@@ -358,34 +361,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 );
                 print(_validate);
                 // if (_validate) {
-                  print(countrycode + phonenumber);
-                  this.phoneNo = countrycode + phonenumber;
-                  print(phoneNo);
-                  print(this.phoneNo);
-                  verifyPhone();
-                  // SharedUserData userdata = SharedUserData(
-                  //   countCode: countrycode,
-                  //   phoneNumbers: phonenumber,
-                  // );
+                print(countrycode + phonenumber);
+                this.phoneNo = countrycode + phonenumber;
+                print(phoneNo);
+                print(this.phoneNo);
+                verifyPhone();
+                // SharedUserData userdata = SharedUserData(
+                //   countCode: countrycode,
+                //   phoneNumbers: phonenumber,
+                // );
 
-                  // _auth.currentUser().then(
-                  //   (user) {
-                  //     if (user != null) {
-                  //       Navigator.of(context).pop();
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (context) => UserProfile(
-                  //             cCode: userdata.countCode,
-                  //             phoneNumber: userdata.phoneNumbers,
-                  //           ),
-                  //         ),
-                  //       );
-                  //     } else {
-                  //       signIn();
-                  //     }
-                  // },
-                  // );
+                // _auth.currentUser().then(
+                //   (user) {
+                //     if (user != null) {
+                //       Navigator.of(context).pop();
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => UserProfile(
+                //             cCode: userdata.countCode,
+                //             phoneNumber: userdata.phoneNumbers,
+                //           ),
+                //         ),
+                //       );
+                //     } else {
+                //       signIn();
+                //     }
+                // },
+                // );
                 // }
               },
             ),

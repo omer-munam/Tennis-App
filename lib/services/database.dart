@@ -15,11 +15,7 @@ class DatabaseService {
 
   Future<User> createUser(User user) async {
     try {
-      await _usersCollectionReference.add(user.toJson()).then((value) => {
-            _usersCollectionReference
-                .document(value.documentID)
-                .updateData({"id": value.documentID})
-          });
+      await _usersCollectionReference.add(user.toJson());
       return user;
     } catch (e) {
       print(e.message);
