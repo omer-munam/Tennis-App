@@ -7,12 +7,20 @@ class User {
   String yearOfBirth;
   String playLevel;
   String side;
-  int phoneNumber;
+  String phoneNumber;
   String image;
   String cCode;
 
-  User(this.id, this.userName, this.gender, this.yearOfBirth, this.playLevel,
-      this.side, this.phoneNumber, this.image, this.cCode);
+  User(
+      {this.id,
+      this.userName,
+      this.gender,
+      this.yearOfBirth,
+      this.playLevel,
+      this.side,
+      this.phoneNumber,
+      this.image,
+      this.cCode});
 
   User.fromSnapshot(DocumentSnapshot snapshot) {
     id = snapshot.data['id'];
@@ -28,6 +36,7 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'userName': userName,
       'gender': gender,
       'yearOfBirth': yearOfBirth,

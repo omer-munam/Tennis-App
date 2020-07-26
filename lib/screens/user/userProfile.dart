@@ -1,7 +1,10 @@
 import 'package:country_list_pick/country_list_pick.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tennis_event/Models/user.dart';
 import 'package:tennis_event/screens/settings.dart';
+import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
@@ -21,12 +24,13 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  String myGender = 'Choose Gender';
-  String myYob = 'Choose Year of Birth';
-  String myLevel = 'Choose Play Level';
-  String side = 'Choose Side';
+  String myGender;
+  String myYob;
+  String myLevel;
+  String side;
   String username;
   TextEditingController _controller1, _controller2;
+  DatabaseService _databaseService = DatabaseService();
 
   void initState() {
     super.initState();
@@ -42,7 +46,6 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-
     print('Country code: ${widget.cCode}');
     print('Phone No: ${widget.phoneNumber}');
     return Scaffold(
@@ -86,37 +89,37 @@ class _UserProfileState extends State<UserProfile> {
               controller: _controller1,
               labelText: 'Username',
             ),
+            // Padding(
+            //   padding:
+            //       const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+            //   child: Container(
+            //     padding: EdgeInsets.symmetric(horizontal: 16.0),
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(10),
+            //       border: Border.all(
+            //           width: 2.0,
+            //           color: kDividerLineGray,
+            //           style: BorderStyle.solid),
+            //     ),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.stretch,
+            //       children: [
+            //         CountryListPick(
+            //           isShowFlag: true,
+            //           isShowTitle: true,
+            //           isDownIcon: true,
+            //           showEnglishName: true,
+            //           onChanged: (CountryCode code) {
+            //             code = widget.cCode as CountryCode;
+            //           },
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      width: 2.0,
-                      color: kDividerLineGray,
-                      style: BorderStyle.solid),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CountryListPick(
-                      isShowFlag: true,
-                      isShowTitle: true,
-                      isDownIcon: true,
-                      showEnglishName: true,
-                      onChanged: (CountryCode code) {
-                        code = widget.cCode as CountryCode;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 decoration: BoxDecoration(
@@ -136,7 +139,7 @@ class _UserProfileState extends State<UserProfile> {
                     'Right Sided',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: value != 'Choose Side' ? value : null,
                       child: Text(value),
                     );
                   }).toList(),
@@ -151,7 +154,7 @@ class _UserProfileState extends State<UserProfile> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 decoration: BoxDecoration(
@@ -172,7 +175,7 @@ class _UserProfileState extends State<UserProfile> {
                     'Professional',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: value != 'Choose Play Level' ? value : null,
                       child: Text(value),
                     );
                   }).toList(),
@@ -187,7 +190,7 @@ class _UserProfileState extends State<UserProfile> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 decoration: BoxDecoration(
@@ -207,7 +210,7 @@ class _UserProfileState extends State<UserProfile> {
                     'Female',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: value != 'Choose Gender' ? value : null,
                       child: Text(value),
                     );
                   }).toList(),
@@ -222,7 +225,7 @@ class _UserProfileState extends State<UserProfile> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 decoration: BoxDecoration(
@@ -254,7 +257,7 @@ class _UserProfileState extends State<UserProfile> {
                     '2004',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: value != 'Choose Year of Birth' ? value : null,
                       child: Text(value),
                     );
                   }).toList(),
@@ -267,27 +270,52 @@ class _UserProfileState extends State<UserProfile> {
                 ),
               ),
             ),
-            NewGFields(
-              onchange: () {
-                widget.phoneNumber;
-              },
-              controller: _controller2,
-              labelText: 'Phone Number',
-            ),
+            // NewGFields(
+            //   onchange: () {
+            //     widget.phoneNumber;
+            //   },
+            //   controller: _controller2,
+            //   labelText: 'Phone Number',
+            // ),
             BottomButton(
               buttonTitle: 'Save',
               tapping: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BottomMenuBar(),
-                  ),
-                );
+                if (_controller1.text == "" ||
+                    myGender == null ||
+                    myYob == null ||
+                    myLevel == null ||
+                    side == null) {
+                  print("All Fields Mandatory");
+                  return;
+                }
+                User user = new User(
+                    userName: _controller1.text,
+                    gender: myGender,
+                    yearOfBirth: myYob,
+                    playLevel: myLevel,
+                    phoneNumber: widget.phoneNumber,
+                    cCode: widget.cCode,
+                    side: side);
+                signUp(user);
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void signUp(User user) async {
+    dynamic result = await _databaseService.createUser(user);
+    if (result == null) {
+      print('Error Registering..');
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BottomMenuBar(),
+        ),
+      );
+    }
   }
 }

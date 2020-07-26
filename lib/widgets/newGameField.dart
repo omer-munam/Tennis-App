@@ -32,8 +32,9 @@ class NewGFields extends StatelessWidget {
         vertical: 4.0,
       ),
       child: TextField(
-        onSubmitted: (onchange) async {
-          await print(onchange);
+        onChanged: onchange,
+        onSubmitted: (onchange) {
+          print(onchange);
         },
         controller: _controller,
         decoration: InputDecoration(
