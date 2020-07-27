@@ -131,13 +131,14 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
                       setState(() => loading = true);
 
                       Court court = new Court(
-                          courtname: _controller1.text,
-                          street: _controller3.text,
-                          postalcode: _controller4.text,
-                          country: _controller2.text,
-                          city: _controller5.text,
-                          telephone: _controller6.text,
-                          email: _controller7.text);
+                        courtname: _controller1.text.trim(),
+                        street: _controller3.text.trim(),
+                        postalcode: _controller4.text.trim(),
+                        country: _controller2.text.trim(),
+                        city: _controller5.text.trim(),
+                        telephone: _controller6.text.trim(),
+                        email: _controller7.text.trim(),
+                      );
 
                       createCourt(court, context);
                     },
@@ -161,12 +162,13 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );
-      Navigator.push(
-        context1,
-        MaterialPageRoute(
-          builder: (context) => GameDetails(),
-        ),
-      );
+      Navigator.pop(context);
+      // Navigator.push(
+      //   context1,
+      //   MaterialPageRoute(
+      //     builder: (context) => GameDetails(),
+      //   ),
+      // );
     }
   }
 }

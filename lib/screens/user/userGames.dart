@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_event/Models/court.dart';
+import 'package:tennis_event/Models/game.dart';
 import 'package:tennis_event/Widgets/gamesCard.dart';
+import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
+import 'package:tennis_event/utilities/loader.dart';
 import 'package:tennis_event/utilities/styles.dart';
 
 class MyGames extends StatefulWidget {
@@ -12,51 +17,43 @@ class MyGames extends StatefulWidget {
 
 class _MyGamesState extends State<MyGames> {
   int _selectedIndex = 1;
+  bool loading = false;
+  DatabaseService _db = DatabaseService();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: kMainThemeColor,
-        centerTitle: true,
-        title: Text(
-          'My Games',
-          style: kAppbarStyle,
-        ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              UserGamesCard(),
-              SizedBox(
-                height: 100,
+    List<Game> myGames = Provider.of<List<Game>>(context);
+    if (myGames == null) {
+      loading = true;
+    } else {
+      loading = false;
+    }
+
+    return loading
+        ? Loading()
+        : Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              backgroundColor: kMainThemeColor,
+              centerTitle: true,
+              title: Text(
+                'My Games',
+                style: kAppbarStyle,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Text(
-                        'The Game is yet to be created by the user and the basic game layout should be like the above tile & fetched from DB.',
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 15,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            ),
+            body: Container(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: myGames.length,
+                itemBuilder: (context, index) {
+                  _db = DatabaseService(courtId: myGames[index].courtId);
+                  return StreamProvider<Court>.value(
+                    value: _db.court,
+                    child: UserGamesCard(myGames[index]),
+                  );
+                },
               ),
-            ],
-          ),
-        ],
-      ),
-    );
+            ),
+          );
   }
 }

@@ -96,10 +96,11 @@ class _UserProfileState extends State<UserProfile> {
                       getImage();
                     },
                     child: CircleAvatar(
-                        radius: 50.0,
-                        backgroundImage: image == null
-                            ? AssetImage('assets/images/playerImage.png')
-                            : FileImage(image)),
+                      radius: 50.0,
+                      backgroundImage: image == null
+                          ? AssetImage('assets/images/playerImage.png')
+                          : FileImage(image),
+                    ),
                   ),
                   NewGFields(
                     onchange: username,
@@ -308,14 +309,16 @@ class _UserProfileState extends State<UserProfile> {
                         return;
                       }
                       User user = new User(
-                          id: widget.uidUser,
-                          userName: _controller1.text,
-                          gender: myGender,
-                          yearOfBirth: myYob,
-                          playLevel: myLevel,
-                          phoneNumber: widget.phoneNumber,
-                          cCode: widget.cCode,
-                          side: side);
+                        id: widget.uidUser,
+                        userName: _controller1.text.trim(),
+                        gender: myGender,
+                        yearOfBirth: myYob,
+                        playLevel: myLevel,
+                        phoneNumber: widget.phoneNumber,
+                        cCode: widget.cCode,
+                        side: side,
+                        points: 0,
+                      );
                       signUp(user, context);
                     },
                   ),

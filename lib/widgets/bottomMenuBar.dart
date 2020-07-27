@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tennis_event/Models/court.dart';
+import 'package:tennis_event/Models/game.dart';
 import 'package:tennis_event/screens/game/joinGame.dart';
 import 'package:tennis_event/screens/game/newGame.dart';
 import 'package:tennis_event/screens/user/userGames.dart';
@@ -18,7 +19,10 @@ class _BottomMenuBarState extends State<BottomMenuBar> {
   static DatabaseService _db = DatabaseService();
   final List<Widget> _children = [
     JoinGame(),
-    MyGames(),
+    StreamProvider<List<Game>>.value(
+      value: _db.userGames,
+      child: MyGames(),
+    ),
     StreamProvider<List<Court>>.value(
       value: _db.courts,
       child: NewGames(),

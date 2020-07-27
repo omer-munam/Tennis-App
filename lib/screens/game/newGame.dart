@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/game.dart';
+import 'package:tennis_event/screens/game/gameDetail.dart';
 import 'package:tennis_event/screens/user/userGames.dart';
 import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
@@ -35,7 +36,9 @@ class _NewGameState extends State<NewGames> {
   FirebaseAuth _auth;
   FirebaseUser currentUser;
   bool loading = false;
-  DatabaseService _databaseService = DatabaseService();
+  DatabaseService _db = DatabaseService();
+  List<String> sCourts;
+  List<String> courtIds;
 
   TextEditingController _controller1, _controller2, _controller3, _controller4;
 
@@ -58,12 +61,12 @@ class _NewGameState extends State<NewGames> {
   @override
   Widget build(BuildContext context) {
     List<Court> courts = Provider.of<List<Court>>(context);
-    List<String> sCourts = ['Choose Court'];
-    List<String> courtIds = ['0'];
     if (courts == null) {
       loading = true;
     } else {
       loading = false;
+      sCourts = ['Choose Court'];
+      courtIds = ['0'];
       for (var court in courts) {
         sCourts.add(
             court.courtname + ': (' + court.city + ', ' + court.country + ')');
@@ -353,15 +356,17 @@ class _NewGameState extends State<NewGames> {
                       );
 
                       Game game = Game(
-                        name: _controller1.text,
+                        name: _controller1.text.trim(),
                         courtId: courtIds[courtIdIndex],
                         type: gameType,
                         tournament: isTournament,
                         currency: currency,
-                        price: _controller4.text,
-                        notes: _controller2.text,
+                        price: _controller4.text.trim(),
+                        notes: _controller2.text.trim(),
                         organizerId: currentUser.uid,
                         time: Timestamp.fromDate(selectedDate),
+                        players: [],
+                        booked: false,
                       );
 
                       createGame(game, context);
@@ -374,7 +379,7 @@ class _NewGameState extends State<NewGames> {
   }
 
   void createGame(Game game, BuildContext context) async {
-    dynamic result = await _databaseService.createGame(game);
+    Game result = await _db.createGame(game);
     if (result == null) {
       print('Error Registering..');
       setState(() => loading = false);
@@ -388,9 +393,27 @@ class _NewGameState extends State<NewGames> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MyGames(),
+          builder: (context) => GameDetails(result),
         ),
       );
+      // _db = DatabaseService(courtId: result.courtId);
+      // Stream<Court> courtStream = _db.court;
+      // Court court;
+      // courtStream.listen(
+      //   (data) {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => GameDetails(result, data),
+      //       ),
+      //     );
+      //     print('data: ${data.toJson()}');
+      //     court = data;
+      //   },
+      //   onError: (error) {
+      //     print(error);
+      //   },
+      // );
     }
   }
 }

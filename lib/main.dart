@@ -57,7 +57,6 @@ class MyApp extends StatelessWidget {
         RecentCourtSearches.id: (context) => RecentCourtSearches(),
         NewTennisCourt.id: (context) => NewTennisCourt(),
         TournamentDrawgame.id: (context) => TournamentDrawgame(),
-        GameDetails.id: (context) => GameDetails(),
         JoinGame.id: (context) => JoinGame(),
         NewGames.id: (context) => NewGames(),
         TennisCourt.id: (context) => TennisCourt(),

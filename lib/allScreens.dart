@@ -194,12 +194,12 @@ class AllScreens extends StatelessWidget {
                     child: Text("Game Detail"),
                     elevation: 5.0,
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GameDetails(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => GameDetails(),
+                      //   ),
+                      // );
                     },
                   ),
                   RaisedButton(

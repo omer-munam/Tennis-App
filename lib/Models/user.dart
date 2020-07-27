@@ -10,6 +10,7 @@ class User {
   String phoneNumber;
   String image;
   String cCode;
+  int points;
 
   User(
       {this.id,
@@ -20,7 +21,8 @@ class User {
       this.side,
       this.phoneNumber,
       this.image,
-      this.cCode});
+      this.cCode,
+      this.points});
 
   User.fromSnapshot(DocumentSnapshot snapshot) {
     id = snapshot.data['id'];
@@ -32,6 +34,7 @@ class User {
     phoneNumber = snapshot.data['phoneNumber'];
     image = snapshot.data['image'];
     cCode = snapshot.data['cCode'];
+    points = snapshot.data['points'];
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +48,7 @@ class User {
       'phoneNumber': phoneNumber,
       'image': image,
       'countryCode': cCode,
+      'points': points,
     };
   }
 }

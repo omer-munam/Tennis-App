@@ -76,6 +76,17 @@ const kCardHeading = TextStyle(
   fontWeight: FontWeight.w500,
 );
 
+const kCardSubHeading = TextStyle(
+  fontFamily: 'Roboto',
+  fontWeight: FontWeight.w500,
+);
+
+var kCardSubHeadingGrey = TextStyle(
+  fontFamily: 'Roboto',
+  fontWeight: FontWeight.w500,
+  color: Colors.grey.shade800,
+);
+
 const kCourtScheduleCardTile = TextStyle(
   color: Colors.white,
   fontFamily: 'Roboto',
