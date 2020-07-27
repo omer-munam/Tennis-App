@@ -5,7 +5,7 @@ class Game {
   String name;
   List<String> players;
   String organizerId;
-  String courtLocation;
+  String courtId;
   String type;
   String currency;
   String price;
@@ -20,7 +20,7 @@ class Game {
     this.name,
     this.players,
     this.organizerId,
-    this.courtLocation,
+    this.courtId,
     this.type,
     this.currency,
     this.price,
@@ -36,7 +36,7 @@ class Game {
     name = snapshot.data['name'];
     players = List.from(snapshot.data['players']);
     organizerId = snapshot.data['organizerId'];
-    courtLocation = snapshot.data['courtLocation'];
+    courtId = snapshot.data['courtId'];
     type = snapshot.data['type'];
     currency = snapshot.data['currency'];
     price = snapshot.data['price'];
@@ -53,7 +53,7 @@ class Game {
       'name': name,
       'players': players,
       'organizerId': organizerId,
-      'courtLocation': courtLocation,
+      'courtId': courtId,
       'type': type,
       'currency': currency,
       'price': price,

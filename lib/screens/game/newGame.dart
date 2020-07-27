@@ -4,8 +4,9 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_event/models/game.dart';
-import 'package:tennis_event/screens/game/gameDetail.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_event/Models/court.dart';
+import 'package:tennis_event/Models/game.dart';
 import 'package:tennis_event/screens/user/userGames.dart';
 import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
@@ -56,6 +57,19 @@ class _NewGameState extends State<NewGames> {
 
   @override
   Widget build(BuildContext context) {
+    List<Court> courts = Provider.of<List<Court>>(context);
+    List<String> sCourts = ['Choose Court'];
+    List<String> courtIds = ['0'];
+    if (courts == null) {
+      loading = true;
+    } else {
+      loading = false;
+      for (var court in courts) {
+        sCourts.add(
+            court.courtname + ': (' + court.city + ', ' + court.country + ')');
+        courtIds.add(court.id);
+      }
+    }
     return loading
         ? Loading()
         : Scaffold(
@@ -158,11 +172,8 @@ class _NewGameState extends State<NewGames> {
                       child: DropdownButton<String>(
                         isExpanded: true,
                         value: chooseCourt,
-                        items: <String>[
-                          'Choose Court',
-                          'Location 1',
-                          'Location 2',
-                        ].map<DropdownMenuItem<String>>((String value) {
+                        items: sCourts
+                            .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value != 'Choose Court' ? value : null,
                             child: Text(value),
@@ -328,9 +339,7 @@ class _NewGameState extends State<NewGames> {
                       _auth = FirebaseAuth.instance;
                       currentUser = await _auth.currentUser();
 
-                      print('formatTime: ${_controller3.text}');
-                      print('timeSelected: $timeSelected');
-                      print('selectedDate: $selectedDate');
+                      int courtIdIndex = sCourts.indexOf(chooseCourt);
 
                       selectedDate = DateTime(
                         selectedDate.year,
@@ -345,7 +354,7 @@ class _NewGameState extends State<NewGames> {
 
                       Game game = Game(
                         name: _controller1.text,
-                        courtLocation: chooseCourt,
+                        courtId: courtIds[courtIdIndex],
                         type: gameType,
                         tournament: isTournament,
                         currency: currency,

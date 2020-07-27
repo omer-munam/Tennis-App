@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/screens/game/joinGame.dart';
 import 'package:tennis_event/screens/game/newGame.dart';
 import 'package:tennis_event/screens/user/userGames.dart';
 import 'package:tennis_event/screens/user/userRanking.dart';
+import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
 
 class BottomMenuBar extends StatefulWidget {
@@ -12,10 +15,14 @@ class BottomMenuBar extends StatefulWidget {
 
 class _BottomMenuBarState extends State<BottomMenuBar> {
   int _currentIndex = 0;
+  static DatabaseService _db = DatabaseService();
   final List<Widget> _children = [
     JoinGame(),
     MyGames(),
-    NewGames(),
+    StreamProvider<List<Court>>.value(
+      value: _db.courts,
+      child: NewGames(),
+    ),
     UserRanking(),
   ];
 

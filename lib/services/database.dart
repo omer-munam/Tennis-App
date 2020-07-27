@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/user.dart';
-import 'package:tennis_event/models/game.dart';
+import 'package:tennis_event/Models/game.dart';
 
 class DatabaseService {
   final String userId;
@@ -75,5 +74,24 @@ class DatabaseService {
         .document(userId)
         .snapshots()
         .map((snapshot) => User.fromSnapshot(snapshot));
+  }
+
+  Stream<List<Court>> get courts {
+    return _courtsCollectionReference.snapshots().map(_courtsListFromSnapshot);
+  }
+
+  List<Court> _courtsListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return Court(
+        id: doc.data['id'],
+        courtname: doc.data['courtname'],
+        street: doc.data['street'],
+        postalcode: doc.data['postalcode'],
+        country: doc.data['country'],
+        city: doc.data['city'],
+        telephone: doc.data['telephone'],
+        email: doc.data['email'],
+      );
+    }).toList();
   }
 }
