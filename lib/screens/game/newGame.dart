@@ -396,24 +396,6 @@ class _NewGameState extends State<NewGames> {
           builder: (context) => GameDetails(result),
         ),
       );
-      // _db = DatabaseService(courtId: result.courtId);
-      // Stream<Court> courtStream = _db.court;
-      // Court court;
-      // courtStream.listen(
-      //   (data) {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => GameDetails(result, data),
-      //       ),
-      //     );
-      //     print('data: ${data.toJson()}');
-      //     court = data;
-      //   },
-      //   onError: (error) {
-      //     print(error);
-      //   },
-      // );
     }
   }
 }
