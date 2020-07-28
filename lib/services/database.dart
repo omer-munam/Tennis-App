@@ -22,7 +22,15 @@ class DatabaseService {
   final CollectionReference _courtsCollectionReference =
       Firestore.instance.collection("courts");
 
-  Future<Court> createCourt(Court court) async {
+ /* Future<bool> checkUser(String uid) async {
+  _usersCollectionReference.document(uid).get().then((doc) {
+    if(doc.exists)
+      return true;
+    else
+      return false;
+    }*/
+
+  Future<Court> createCourtonError: (Court court) async {
     try {
       await _courtsCollectionReference.add(court.toJson()).then(
             (value) => {
