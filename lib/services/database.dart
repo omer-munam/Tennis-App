@@ -10,7 +10,7 @@ class DatabaseService {
   final String courtId;
   final List<String> playerIds;
 
-  DatabaseService({this.userId, this.courtId, this.playerIds});
+  DatabaseService({this.userId, this.courtId, this.playerIds, String userid});
 
   //collection reference
   final CollectionReference _usersCollectionReference =
@@ -22,15 +22,7 @@ class DatabaseService {
   final CollectionReference _courtsCollectionReference =
       Firestore.instance.collection("courts");
 
- /* Future<bool> checkUser(String uid) async {
-  _usersCollectionReference.document(uid).get().then((doc) {
-    if(doc.exists)
-      return true;
-    else
-      return false;
-    }*/
-
-  Future<Court> createCourtonError: (Court court) async {
+  Future<Court> createCourt(Court court) async {
     try {
       await _courtsCollectionReference.add(court.toJson()).then(
             (value) => {
@@ -67,6 +59,15 @@ class DatabaseService {
     } catch (e) {
       print(e.message);
     }
+  }
+
+  Future<bool> checkUser(String uid) async {
+    _usersCollectionReference.document(uid).get().then((doc) {
+      if (doc.exists)
+        return true;
+      else
+        return false;
+    });
   }
 
   Future uploadImage(String fileName, File _image) async {
