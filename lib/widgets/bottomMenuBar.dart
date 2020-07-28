@@ -38,8 +38,7 @@ class _BottomMenuBarState extends State<BottomMenuBar> {
         backgroundColor: Colors.white,
         selectedLabelStyle: TextStyle(fontFamily: 'Roboto'),
         currentIndex: _currentIndex,
-        // this will be set when a new tab is tapped.
-        //test branch
+        // this will be set when a new tab is tapped
         onTap: onTabTapped,
         items: [
           BottomNavigationBarItem(
