@@ -39,6 +39,7 @@ class _BottomMenuBarState extends State<BottomMenuBar> {
         selectedLabelStyle: TextStyle(fontFamily: 'Roboto'),
         currentIndex: _currentIndex,
         // this will be set when a new tab is tapped.
+        //test branch
         onTap: onTabTapped,
         items: [
           BottomNavigationBarItem(
