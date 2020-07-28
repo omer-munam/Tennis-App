@@ -69,9 +69,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => UserProfile(
-                    cCode: countrycode,
-                    phoneNumber: phonenumber,
-                    uidUser: user.uid),
+                  cCode: countrycode,
+                  phoneNumber: phonenumber,
+                  uidUser: user.uid,
+                ),
               ),
             );
           } else {

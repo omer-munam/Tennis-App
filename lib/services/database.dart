@@ -85,6 +85,10 @@ class DatabaseService {
         .map(_usersListFromSnapshot);
   }
 
+  Stream<List<User>> get users {
+    return _usersCollectionReference.snapshots().map(_usersListFromSnapshot);
+  }
+
   Stream<List<Court>> get courts {
     return _courtsCollectionReference.snapshots().map(_courtsListFromSnapshot);
   }
