@@ -23,6 +23,7 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
   String city;
   String phone;
   String email;
+  String capacity;
   DatabaseService _db = new DatabaseService();
   bool loading = false;
 
@@ -32,7 +33,8 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
       _controller4,
       _controller5,
       _controller6,
-      _controller7;
+      _controller7,
+      _controller8;
 
   void initState() {
     super.initState();
@@ -43,6 +45,7 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
     _controller5 = TextEditingController();
     _controller6 = TextEditingController();
     _controller7 = TextEditingController();
+    _controller8 = TextEditingController();
   }
 
   void dispose() {
@@ -53,6 +56,7 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
     _controller5.dispose();
     _controller6.dispose();
     _controller7.dispose();
+    _controller8.dispose();
     super.dispose();
   }
 
@@ -115,6 +119,11 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
                     labelText: 'Email',
                     onchange: email,
                   ),
+                  NewGFields(
+                    controller: _controller7,
+                    labelText: 'Capacity',
+                    onchange: capacity,
+                  ),
                   BottomButton(
                     buttonTitle: 'Submit',
                     tapping: () {
@@ -124,21 +133,22 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
                           _controller4.text == "" ||
                           _controller5.text == "" ||
                           _controller6.text == "" ||
-                          _controller7.text == "") {
+                          _controller7.text == "" ||
+                          _controller8.text == "") {
                         print("All Fields Are Mandatory");
                         return;
                       }
                       setState(() => loading = true);
 
                       Court court = new Court(
-                        courtname: _controller1.text.trim(),
-                        street: _controller3.text.trim(),
-                        postalcode: _controller4.text.trim(),
-                        country: _controller2.text.trim(),
-                        city: _controller5.text.trim(),
-                        telephone: _controller6.text.trim(),
-                        email: _controller7.text.trim(),
-                      );
+                          courtname: _controller1.text.trim(),
+                          street: _controller3.text.trim(),
+                          postalcode: _controller4.text.trim(),
+                          country: _controller2.text.trim(),
+                          city: _controller5.text.trim(),
+                          telephone: _controller6.text.trim(),
+                          email: _controller7.text.trim(),
+                          capacity: int.parse(_controller8.text.trim()));
 
                       createCourt(court, context);
                     },

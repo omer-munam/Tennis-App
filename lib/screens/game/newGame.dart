@@ -111,6 +111,8 @@ class _NewGameState extends State<NewGames> {
                     ),
                     child: DateField(
                       label: 'Select Date',
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2100),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.all(
