@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tennis_event/Models/user.dart';
@@ -305,7 +306,13 @@ class _UserProfileState extends State<UserProfile> {
                           myLevel == null ||
                           side == null ||
                           _image == null) {
-                        print("All Fields Mandatory");
+                        Fluttertoast.showToast(
+                          msg: 'All Fields are mandatory',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
                         return;
                       }
                       User user = new User(
