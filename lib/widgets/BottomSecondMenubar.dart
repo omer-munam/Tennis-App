@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_event/screens/game/newGame.dart';
-import 'package:tennis_event/screens/user/userGames.dart';
+import 'package:tennis_event/screens/game/joinGame.dart';
+import 'package:tennis_event/screens/game/frenchOpenDraw.dart';
 import 'package:tennis_event/screens/user/userRanking.dart';
 import 'package:tennis_event/utilities/constants.dart';
+import 'package:tennis_event/widgets/playersCard.dart';
 
 class BottomSecondMbar extends StatefulWidget {
   @override
@@ -12,9 +13,9 @@ class BottomSecondMbar extends StatefulWidget {
 class _BottomSecondMbarState extends State<BottomSecondMbar> {
   int _currentIndex = 0;
   final List<Widget> _children = [
-    MyGames(),
-    NewGames(),
-    UserRanking(),
+    TournamentDrawgame(),
+    Results(),
+    PlayersCard(),
   ];
 
   @override
@@ -38,7 +39,7 @@ class _BottomSecondMbarState extends State<BottomSecondMbar> {
               scale: 10,
               fit: BoxFit.scaleDown,
             ),
-            title: Text('Join Game'),
+            title: Text('Draw'),
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
@@ -46,11 +47,11 @@ class _BottomSecondMbarState extends State<BottomSecondMbar> {
               scale: 10,
               fit: BoxFit.scaleDown,
             ),
-            title: Text('Games'),
+            title: Text('Results'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.group_add),
-            title: Text('Invite'),
+            title: Text('Players'),
           ),
         ],
         elevation: 25,
@@ -66,5 +67,24 @@ class _BottomSecondMbarState extends State<BottomSecondMbar> {
     setState(() {
       _currentIndex = value;
     });
+  }
+}
+
+class Results extends StatelessWidget {
+//  PlayersCard({this.listTile, this.location, this.name, this.data, this.icon});
+//
+//  final Widget listTile;
+//  final String name;
+//  final String location;
+//  final String data;
+//  final Icon icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Results Screen'),
+      ),
+    );
   }
 }

@@ -42,7 +42,11 @@ class _NewGameState extends State<NewGames> {
   List<String> courtIds;
   Court _selectedCourt;
 
-  TextEditingController _controller1, _controller2, _controller3, _controller4;
+  TextEditingController _controller1,
+      _controller2,
+      _controller3,
+      _controller4,
+      _controller5;
 
   void initState() {
     super.initState();
@@ -50,6 +54,7 @@ class _NewGameState extends State<NewGames> {
     _controller2 = TextEditingController();
     _controller3 = TextEditingController();
     _controller4 = TextEditingController();
+    _controller5 = TextEditingController();
   }
 
   void dispose() {
@@ -57,6 +62,7 @@ class _NewGameState extends State<NewGames> {
     _controller2.dispose();
     _controller3.dispose();
     _controller4.dispose();
+    _controller5.dispose();
     super.dispose();
   }
 
@@ -80,13 +86,6 @@ class _NewGameState extends State<NewGames> {
         : Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
               backgroundColor: kMainThemeColor,
               centerTitle: true,
               title: Text(
@@ -332,7 +331,13 @@ class _NewGameState extends State<NewGames> {
                           currency == null ||
                           _controller4.text == "" ||
                           _controller2.text == "") {
-                        print("All Fields Mandatory");
+                        Fluttertoast.showToast(
+                          msg: 'All Fields are mandatory',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
                         return;
                       }
                       setState(() => loading = true);
@@ -341,6 +346,26 @@ class _NewGameState extends State<NewGames> {
                       currentUser = await _auth.currentUser();
 
                       int courtIdIndex = sCourts.indexOf(chooseCourt);
+
+                      int slots;
+                      if (gameType == 'Single' && !isTournament) {
+                        slots = 2;
+                      } else if (gameType == 'Double' && !isTournament) {
+                        slots = 4;
+                      } else if (isTournament) {
+                        if (_controller5.text == "") {
+                          Fluttertoast.showToast(
+                            msg: 'All Fields are mandatory',
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                          );
+                          return;
+                        } else {
+                          slots = int.parse(_controller5.text.trim());
+                        }
+                      }
 
                       selectedDate = DateTime(
                         selectedDate.year,

@@ -376,7 +376,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     this.phoneNo = countrycode + phonenumber;
                                     print(phoneNo);
                                     print(this.phoneNo);
+                                    loading = true;
                                     verifyPhone();
+                                    loading = false;
                                   }
                                 },
                               ),

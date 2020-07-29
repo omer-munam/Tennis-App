@@ -7,6 +7,7 @@ import 'package:tennis_event/Models/user.dart';
 import 'package:tennis_event/screens/game/gameDetail.dart';
 import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/styles.dart';
+import 'package:tennis_event/widgets/BottomSecondMenubar.dart';
 
 class UserGamesCard extends StatelessWidget {
   Game game;
@@ -55,12 +56,21 @@ class UserGamesCard extends StatelessWidget {
   Widget gameCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GameDetails(game, court: court),
-          ),
-        );
+        if (!game.tournament) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GameDetails(game, court: court),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BottomSecondMbar(),
+            ),
+          );
+        }
       },
       child: Card(
         elevation: 3,
