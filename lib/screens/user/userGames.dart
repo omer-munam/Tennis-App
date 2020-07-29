@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,41 +20,82 @@ class _MyGamesState extends State<MyGames> {
   int _selectedIndex = 1;
   bool loading = false;
   DatabaseService _db = DatabaseService();
+  List<Game> myGames;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser currentUser;
+
+  Future<FirebaseUser> getCurrentUser() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user;
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Game> myGames = Provider.of<List<Game>>(context);
-    if (myGames == null) {
-      loading = true;
-    } else {
-      loading = false;
-    }
-
     return loading
         ? Loading()
-        : Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              backgroundColor: kMainThemeColor,
-              centerTitle: true,
-              title: Text(
-                'My Games',
-                style: kAppbarStyle,
-              ),
-            ),
-            body: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                itemCount: myGames.length,
-                itemBuilder: (context, index) {
-                  _db = DatabaseService(courtId: myGames[index].courtId);
-                  return StreamProvider<Court>.value(
-                    value: _db.court,
-                    child: UserGamesCard(myGames[index]),
-                  );
-                },
-              ),
-            ),
+        : FutureBuilder(
+            future: getCurrentUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                _db = DatabaseService(userId: snapshot.data.uid);
+                return StreamBuilder(
+                  stream: _db.userGames,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      myGames = snapshot.data;
+                      if (myGames.isNotEmpty) {
+                        return Scaffold(
+                          resizeToAvoidBottomInset: false,
+                          appBar: AppBar(
+                            backgroundColor: kMainThemeColor,
+                            centerTitle: true,
+                            title: Text(
+                              'My Games',
+                              style: kAppbarStyle,
+                            ),
+                          ),
+                          body: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListView.builder(
+                              itemCount: myGames.length,
+                              itemBuilder: (context, index) {
+                                _db = DatabaseService(
+                                    courtId: myGames[index].courtId);
+                                return StreamProvider<Court>.value(
+                                  value: _db.court,
+                                  child: UserGamesCard(myGames[index]),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Scaffold(
+                          resizeToAvoidBottomInset: false,
+                          appBar: AppBar(
+                            backgroundColor: kMainThemeColor,
+                            centerTitle: true,
+                            title: Text(
+                              'My Games',
+                              style: kAppbarStyle,
+                            ),
+                          ),
+                          body: Center(
+                            child: Text(
+                              'You haven\'t created any games yet...',
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      return Loading();
+                    }
+                  },
+                );
+              } else {
+                return Loading();
+              }
+            },
           );
   }
 }

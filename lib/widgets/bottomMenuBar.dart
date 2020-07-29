@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tennis_event/Models/court.dart';
@@ -18,12 +19,10 @@ class BottomMenuBar extends StatefulWidget {
 class _BottomMenuBarState extends State<BottomMenuBar> {
   int _currentIndex = 0;
   static DatabaseService _db = DatabaseService();
+
   final List<Widget> _children = [
     JoinGame(),
-    StreamProvider<List<Game>>.value(
-      value: _db.userGames,
-      child: MyGames(),
-    ),
+    MyGames(),
     StreamProvider<List<Court>>.value(
       value: _db.courts,
       child: NewGames(),

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tennis_event/screens/user/userProfile.dart';
 import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
@@ -70,9 +71,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           assert(user.uid == currentUser.uid);
 
           await _db.checkUser(currentUser.uid).then(
-            (bool value) {
+            (bool value) async {
               loading = false;
               if (value) {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool('isLoggedIn', true);
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
                   context,
@@ -180,9 +183,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       assert(user.uid == currentUser.uid);
 
       await _db.checkUser(currentUser.uid).then(
-        (bool value) {
+        (bool value) async {
           loading = false;
           if (value) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setBool('isLoggedIn', true);
             Navigator.of(context).pop();
             Navigator.pushReplacement(
               context,
