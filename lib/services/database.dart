@@ -62,12 +62,11 @@ class DatabaseService {
   }
 
   Future<bool> checkUser(String uid) async {
-    _usersCollectionReference.document(uid).get().then((doc) {
-      if (doc.exists)
-        return true;
-      else
-        return false;
-    });
+    DocumentSnapshot doc = await _usersCollectionReference.document(uid).get();
+    if (doc.exists)
+      return true;
+    else
+      return false;
   }
 
   Future uploadImage(String fileName, File _image) async {

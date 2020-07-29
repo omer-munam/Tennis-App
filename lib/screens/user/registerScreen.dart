@@ -64,22 +64,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
           FirebaseUser currentUser = await _auth.currentUser();
           assert(user.uid == currentUser.uid);
 
-          if (user != null) {
-            print('Code auto retrieval successfull');
-            Navigator.of(context).pop();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UserProfile(
-                  cCode: countrycode,
-                  phoneNumber: phonenumber,
-                  uidUser: user.uid,
-                ),
-              ),
-            );
-          } else {
-            print('Error: user is null');
-          }
+          await _db.checkUser(currentUser.uid).then(
+            (bool value) {
+              if (value) {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BottomMenuBar(),
+                  ),
+                );
+              } else {
+                if (user != null) {
+                  print('Code auto retrieval successfull');
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserProfile(
+                        cCode: countrycode,
+                        phoneNumber: phonenumber,
+                        uidUser: user.uid,
+                      ),
+                    ),
+                  );
+                } else {
+                  print('Error: user is null');
+                }
+              }
+            },
+          );
         },
         verificationFailed: (AuthException exception) {
           print('Verification failed: ${exception.message}');
@@ -156,33 +170,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
       FirebaseUser user = result.user;
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
-      
-      
-      if (await _db.checkUser(currentUser.uid)) {
-        Navigator.of(context).pop();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BottomMenuBar(),
-          ),
-        );
-      }
 
-      if (user != null) {
-        Navigator.of(context).pop();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => UserProfile(
-              cCode: countrycode,
-              phoneNumber: phonenumber,
-              uidUser: currentUser.uid,
-            ),
-          ),
-        );
-      } else {
-        print('Error: user is null');
-      }
+      await _db.checkUser(currentUser.uid).then(
+        (bool value) {
+          if (value) {
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BottomMenuBar(),
+              ),
+            );
+          } else {
+            if (user != null) {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserProfile(
+                    cCode: countrycode,
+                    phoneNumber: phonenumber,
+                    uidUser: currentUser.uid,
+                  ),
+                ),
+              );
+            } else {
+              print('Error: user is null');
+            }
+          }
+        },
+      );
     } catch (e) {
       handleError(e);
     }
