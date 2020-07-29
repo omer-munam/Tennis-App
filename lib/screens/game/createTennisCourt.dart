@@ -125,7 +125,13 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
                           _controller5.text == "" ||
                           _controller6.text == "" ||
                           _controller7.text == "") {
-                        print("All Fields Are Mandatory");
+                        Fluttertoast.showToast(
+                          msg: 'All Fields are mandatory',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
                         return;
                       }
                       setState(() => loading = true);

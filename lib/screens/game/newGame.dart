@@ -83,13 +83,6 @@ class _NewGameState extends State<NewGames> {
         : Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
               backgroundColor: kMainThemeColor,
               centerTitle: true,
               title: Text(
@@ -351,7 +344,13 @@ class _NewGameState extends State<NewGames> {
                           currency == null ||
                           _controller4.text == "" ||
                           _controller2.text == "") {
-                        print("All Fields Mandatory");
+                        Fluttertoast.showToast(
+                          msg: 'All Fields are mandatory',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
                         return;
                       }
                       setState(() => loading = true);
@@ -368,7 +367,13 @@ class _NewGameState extends State<NewGames> {
                         slots = 4;
                       } else if (isTournament) {
                         if (_controller5.text == "") {
-                          print("All Fields Mandatory");
+                          Fluttertoast.showToast(
+                          msg: 'All Fields are mandatory',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
                           return;
                         } else {
                           slots = int.parse(_controller5.text.trim());
