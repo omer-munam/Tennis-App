@@ -110,8 +110,8 @@ class _NewGameState extends State<NewGames> {
                     ),
                     child: DateField(
                       label: 'Select Date',
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2100),
+                      firstDate: DateTime.now().add(Duration(days: 1)),
+                      lastDate: DateTime(2050),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.all(
@@ -128,7 +128,9 @@ class _NewGameState extends State<NewGames> {
                           selectedDate = value;
                         });
                       },
-                      selectedDate: selectedDate,
+                      selectedDate: selectedDate == null
+                          ? DateTime.now().add(Duration(days: 1))
+                          : selectedDate,
                     ),
                   ),
                   Padding(
@@ -340,12 +342,11 @@ class _NewGameState extends State<NewGames> {
                         );
                         return;
                       }
-                      setState(() => loading = true);
 
                       _auth = FirebaseAuth.instance;
                       currentUser = await _auth.currentUser();
 
-                      int courtIdIndex = sCourts.indexOf(chooseCourt);
+                      // int courtIdIndex = sCourts.indexOf(chooseCourt);
 
                       int slots;
                       if (gameType == 'Single' && !isTournament) {
@@ -380,7 +381,7 @@ class _NewGameState extends State<NewGames> {
 
                       Game game = Game(
                         name: _controller1.text.trim(),
-                        courtId: courtIds[courtIdIndex],
+                        courtId: chooseCourt,
                         type: gameType,
                         tournament: isTournament,
                         currency: currency,
@@ -392,6 +393,7 @@ class _NewGameState extends State<NewGames> {
                         booked: false,
                       );
 
+                      setState(() => loading = true);
                       createGame(game, context);
                     },
                   ),

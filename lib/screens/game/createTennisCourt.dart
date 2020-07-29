@@ -120,7 +120,7 @@ class _NewTennisCourtState extends State<NewTennisCourt> {
                     onchange: email,
                   ),
                   NewGFields(
-                    controller: _controller7,
+                    controller: _controller8,
                     labelText: 'Capacity',
                     onchange: capacity,
                   ),
