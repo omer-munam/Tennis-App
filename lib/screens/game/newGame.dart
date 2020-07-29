@@ -265,7 +265,7 @@ class _NewGameState extends State<NewGames> {
                       ),
                     ),
                   ),
-                  if (isTournament)
+                  if (isTournament == null ? false : isTournament)
                     NewGFields(
                       controller: _controller5,
                       labelText: 'Number of Slots',
@@ -397,6 +397,7 @@ class _NewGameState extends State<NewGames> {
                         time: Timestamp.fromDate(selectedDate),
                         players: [],
                         booked: false,
+                        slots: slots,
                       );
 
                       setState(() => loading = true);
