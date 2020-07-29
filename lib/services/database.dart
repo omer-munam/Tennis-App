@@ -152,8 +152,9 @@ class DatabaseService {
       return Game(
         id: doc.data['id'],
         name: doc.data['name'],
-        players: List.from(doc
-            .data['players']), //TODO: fix exception thrown if players is null
+        players: List.from(
+          doc.data['players'],
+        ),
         organizerId: doc.data['organizerId'],
         courtId: doc.data['courtId'],
         type: doc.data['type'],
@@ -164,6 +165,7 @@ class DatabaseService {
         time: doc.data['time'],
         result: doc.data['result'],
         notes: doc.data['notes'],
+        slots: doc.data['slots'],
       );
     }).toList();
   }

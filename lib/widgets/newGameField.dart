@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tennis_event/utilities/constants.dart';
 
 class NewGFields extends StatelessWidget {
@@ -8,6 +9,7 @@ class NewGFields extends StatelessWidget {
     this.hintText,
     @required this.labelText,
     this.onchange,
+    this.keyboardType,
   })  : _controller = controller,
         super(key: key);
 
@@ -21,12 +23,13 @@ class NewGFields extends StatelessWidget {
   final String hintText;
   final String labelText;
   final dynamic onchange;
+  final TextInputType keyboardType;
   final TextEditingController _controller;
 
   @override
   Widget build(BuildContext context) {
     bool _validate = false;
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 8.0,
         vertical: 4.0,
@@ -36,6 +39,7 @@ class NewGFields extends StatelessWidget {
         onSubmitted: (onchange) {
           print(onchange);
         },
+        keyboardType: keyboardType,
         controller: _controller,
         decoration: InputDecoration(
           errorText: _validate ? 'Enter Text' : null,
