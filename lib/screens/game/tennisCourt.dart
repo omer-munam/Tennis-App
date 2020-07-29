@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Widgets/newGameField.dart';
+import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
 import 'package:tennis_event/utilities/styles.dart';
 
@@ -19,9 +22,13 @@ class _TennisCourtState extends State<TennisCourt> {
     'Pakistan',
     'India',
   ];
+  String searchVal = "", countryVal = "";
+  List<Court> courts, filteredCourts;
+  bool all = true;
   var _currentSelectedItem = 'Select Country';
   @override
   Widget build(BuildContext context) {
+    DatabaseService _db = DatabaseService();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -59,6 +66,10 @@ class _TennisCourtState extends State<TennisCourt> {
                     )
                     .toList(),
                 onChanged: (String newValueSelected) {
+                  countryVal = newValueSelected == 'Select Country'
+                      ? ""
+                      : newValueSelected;
+                  search(value: searchVal, country: countryVal);
                   setState(() {
                     this._currentSelectedItem = newValueSelected;
                   });
@@ -74,7 +85,12 @@ class _TennisCourtState extends State<TennisCourt> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 NewGFields(
-                  labelText: 'Search Court Here', controller: null,
+                  labelText: 'Search Court Here',
+                  controller: null,
+                  onchange: (value) {
+                    searchVal = value;
+                    search(value: value, country: countryVal);
+                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -82,15 +98,47 @@ class _TennisCourtState extends State<TennisCourt> {
                   ),
                   child: Text('Recent Search'),
                 ),
-                Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RecentCourtSearches(),
-                      RecentCourtSearches(),
-                      RecentCourtSearches(),
-                    ],
-                  ),
+                StreamBuilder(
+                  stream: _db.courts,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return SizedBox();
+                    } else {
+                      courts = snapshot.data;
+                      filteredCourts = all ? courts : filteredCourts;
+                      all = false;
+                      return SizedBox(
+                        // Horizontal ListView
+                        height: 100,
+                        child: ListView.builder(
+                          itemCount: 1,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (filteredCourts != null)
+                                  for (Court court in filteredCourts)
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context, court);
+                                      },
+                                      child: RecentCourtSearches(
+                                        courtName: court.courtname +
+                                            ': (' +
+                                            court.city +
+                                            ', ' +
+                                            court.country +
+                                            ')',
+                                      ),
+                                    )
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -134,5 +182,20 @@ class _TennisCourtState extends State<TennisCourt> {
         ],
       ),
     );
+  }
+
+  void search({value = "", country = ""}) {
+    filteredCourts.clear();
+    for (Court court in courts) {
+      if (court.courtname
+              .toLowerCase()
+              .contains(value.toString().toLowerCase()) &&
+          court.country
+              .toLowerCase()
+              .contains(country.toString().toLowerCase())) {
+        filteredCourts.add(court);
+      }
+    }
+    setState(() {});
   }
 }

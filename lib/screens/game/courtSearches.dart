@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 class RecentCourtSearches extends StatefulWidget {
   static const String id = 'recent_court_searches_screen';
+  final String courtName;
+
+  RecentCourtSearches({this.courtName});
 
   @override
   _RecentCourtSearchesState createState() => _RecentCourtSearchesState();
@@ -16,7 +19,7 @@ class _RecentCourtSearchesState extends State<RecentCourtSearches> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            'Green Court',
+            widget.courtName,
             style: TextStyle(
               color: Colors.black,
               fontFamily: 'Roboto',

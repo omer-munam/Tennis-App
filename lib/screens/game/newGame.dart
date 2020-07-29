@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/game.dart';
 import 'package:tennis_event/screens/game/gameDetail.dart';
+import 'package:tennis_event/screens/game/tennisCourt.dart';
 import 'package:tennis_event/screens/user/userGames.dart';
 import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
@@ -39,6 +40,7 @@ class _NewGameState extends State<NewGames> {
   DatabaseService _db = DatabaseService();
   List<String> sCourts;
   List<String> courtIds;
+  Court _selectedCourt;
 
   TextEditingController _controller1, _controller2, _controller3, _controller4;
 
@@ -60,19 +62,19 @@ class _NewGameState extends State<NewGames> {
 
   @override
   Widget build(BuildContext context) {
-    List<Court> courts = Provider.of<List<Court>>(context);
-    if (courts == null) {
-      loading = true;
-    } else {
-      loading = false;
-      sCourts = ['Choose Court'];
-      courtIds = ['0'];
-      for (var court in courts) {
-        sCourts.add(
-            court.courtname + ': (' + court.city + ', ' + court.country + ')');
-        courtIds.add(court.id);
-      }
-    }
+    // List<Court> courts = Provider.of<List<Court>>(context);
+    // if (courts == null) {
+    //   loading = true;
+    // } else {
+    // loading = false;
+    // sCourts = ['Choose Court'];
+    // courtIds = ['0'];
+    // for (var court in courts) {
+    //   sCourts.add(
+    //       court.courtname + ': (' + court.city + ', ' + court.country + ')');
+    //   courtIds.add(court.id);
+    // }
+    // }
     return loading
         ? Loading()
         : Scaffold(
@@ -163,7 +165,8 @@ class _NewGameState extends State<NewGames> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 2.0),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 13.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
@@ -172,23 +175,16 @@ class _NewGameState extends State<NewGames> {
                           style: BorderStyle.solid,
                         ),
                       ),
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        value: chooseCourt,
-                        items: sCourts
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value != 'Choose Court' ? value : null,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            chooseCourt = newValue;
-                            print(newValue);
-                          });
-                        },
-                      ),
+                      child: GestureDetector(
+                          onTap: () {
+                            _selectCourt();
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            child: Text(chooseCourt == null
+                                ? "Select Court"
+                                : _selectedCourt.courtname),
+                          )),
                     ),
                   ),
                   Padding(
@@ -397,5 +393,16 @@ class _NewGameState extends State<NewGames> {
         ),
       );
     }
+  }
+
+  void _selectCourt() async {
+    _selectedCourt = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TennisCourt(),
+        ));
+    setState(() {
+      chooseCourt = _selectedCourt.id;
+    });
   }
 }

@@ -9,17 +9,18 @@ class Court {
   String city;
   String telephone;
   String email;
+  int capacity;
 
-  Court({
-    this.id,
-    this.courtname,
-    this.street,
-    this.postalcode,
-    this.country,
-    this.city,
-    this.telephone,
-    this.email,
-  });
+  Court(
+      {this.id,
+      this.courtname,
+      this.street,
+      this.postalcode,
+      this.country,
+      this.city,
+      this.telephone,
+      this.email,
+      this.capacity});
 
   Court.fromSnapshot(DocumentSnapshot snapshot) {
     id = snapshot.data['id'];
@@ -30,6 +31,7 @@ class Court {
     city = snapshot.data['city'];
     telephone = snapshot.data['telephone'];
     email = snapshot.data['email'];
+    capacity = snapshot.data['capacity'];
   }
 
   Map<String, dynamic> toJson() {
@@ -42,6 +44,7 @@ class Court {
       'city': city,
       'telephone': telephone,
       'email': email,
+      'capacity': capacity
     };
   }
 }
