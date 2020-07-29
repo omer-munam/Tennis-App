@@ -4,9 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tennis_event/screens/user/userProfile.dart';
+import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
 import 'package:tennis_event/utilities/styles.dart';
 import 'package:tennis_event/widgets/bottomButton.dart';
+import 'package:tennis_event/widgets/bottomMenuBar.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String id = 'register_screen';
@@ -22,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String verificationId;
   String errorMessage = '';
   FirebaseAuth _auth = FirebaseAuth.instance;
-
+  DatabaseService _db = DatabaseService();
   final _text = TextEditingController();
   final _code = TextEditingController();
   bool _validate = false;
@@ -62,22 +64,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
           FirebaseUser currentUser = await _auth.currentUser();
           assert(user.uid == currentUser.uid);
 
-          if (user != null) {
-            print('Code auto retrieval successfull');
-            Navigator.of(context).pop();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UserProfile(
-                  cCode: countrycode,
-                  phoneNumber: phonenumber,
-                  uidUser: user.uid,
-                ),
-              ),
-            );
-          } else {
-            print('Error: user is null');
-          }
+          await _db.checkUser(currentUser.uid).then(
+            (bool value) {
+              if (value) {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BottomMenuBar(),
+                  ),
+                );
+              } else {
+                if (user != null) {
+                  print('Code auto retrieval successfull');
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserProfile(
+                        cCode: countrycode,
+                        phoneNumber: phonenumber,
+                        uidUser: user.uid,
+                      ),
+                    ),
+                  );
+                } else {
+                  print('Error: user is null');
+                }
+              }
+            },
+          );
         },
         verificationFailed: (AuthException exception) {
           print('Verification failed: ${exception.message}');
@@ -155,21 +171,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
 
-      if (user != null) {
-        Navigator.of(context).pop();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => UserProfile(
-              cCode: countrycode,
-              phoneNumber: phonenumber,
-              uidUser: currentUser.uid,
-            ),
-          ),
-        );
-      } else {
-        print('Error: user is null');
-      }
+      await _db.checkUser(currentUser.uid).then(
+        (bool value) {
+          if (value) {
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BottomMenuBar(),
+              ),
+            );
+          } else {
+            if (user != null) {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserProfile(
+                    cCode: countrycode,
+                    phoneNumber: phonenumber,
+                    uidUser: currentUser.uid,
+                  ),
+                ),
+              );
+            } else {
+              print('Error: user is null');
+            }
+          }
+        },
+      );
     } catch (e) {
       handleError(e);
     }

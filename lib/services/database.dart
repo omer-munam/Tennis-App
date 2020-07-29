@@ -10,7 +10,7 @@ class DatabaseService {
   final String courtId;
   final List<String> playerIds;
 
-  DatabaseService({this.userId, this.courtId, this.playerIds});
+  DatabaseService({this.userId, this.courtId, this.playerIds, String userid});
 
   //collection reference
   final CollectionReference _usersCollectionReference =
@@ -59,6 +59,14 @@ class DatabaseService {
     } catch (e) {
       print(e.message);
     }
+  }
+
+  Future<bool> checkUser(String uid) async {
+    DocumentSnapshot doc = await _usersCollectionReference.document(uid).get();
+    if (doc.exists)
+      return true;
+    else
+      return false;
   }
 
   Future uploadImage(String fileName, File _image) async {
