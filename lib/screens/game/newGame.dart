@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/game.dart';
 import 'package:tennis_event/screens/game/gameDetail.dart';
-import 'package:tennis_event/screens/user/userGames.dart';
 import 'package:tennis_event/services/database.dart';
 import 'package:tennis_event/utilities/constants.dart';
 import 'package:tennis_event/utilities/loader.dart';
@@ -29,7 +28,7 @@ class _NewGameState extends State<NewGames> {
   String chooseCourt;
   String gameType;
   String currency;
-  bool isTournament;
+  bool isTournament = false;
   String tournament;
   final formatTime = DateFormat.jm();
   DateTime timeSelected;
@@ -40,7 +39,11 @@ class _NewGameState extends State<NewGames> {
   List<String> sCourts;
   List<String> courtIds;
 
-  TextEditingController _controller1, _controller2, _controller3, _controller4;
+  TextEditingController _controller1,
+      _controller2,
+      _controller3,
+      _controller4,
+      _controller5;
 
   void initState() {
     super.initState();
@@ -48,6 +51,7 @@ class _NewGameState extends State<NewGames> {
     _controller2 = TextEditingController();
     _controller3 = TextEditingController();
     _controller4 = TextEditingController();
+    _controller5 = TextEditingController();
   }
 
   void dispose() {
@@ -55,6 +59,7 @@ class _NewGameState extends State<NewGames> {
     _controller2.dispose();
     _controller3.dispose();
     _controller4.dispose();
+    _controller5.dispose();
     super.dispose();
   }
 
@@ -92,8 +97,8 @@ class _NewGameState extends State<NewGames> {
                 style: kAppbarStyle,
               ),
             ),
-            body: SingleChildScrollView(
-              child: Column(
+            body: Container(
+              child: ListView(
                 children: [
                   SizedBox(
                     height: 8,
@@ -102,7 +107,8 @@ class _NewGameState extends State<NewGames> {
                     controller: _controller1,
                     labelText: 'Game Name',
                   ),
-                  Padding(
+                  Container(
+                    height: 75,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
                       vertical: 2.0,
@@ -128,7 +134,8 @@ class _NewGameState extends State<NewGames> {
                       selectedDate: selectedDate,
                     ),
                   ),
-                  Padding(
+                  Container(
+                    height: 75,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
                       vertical: 2.0,
@@ -159,15 +166,17 @@ class _NewGameState extends State<NewGames> {
                       },
                     ),
                   ),
-                  Padding(
+                  Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 2.0),
+                      horizontal: 8.0,
+                      vertical: 2.0,
+                    ),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          width: 2.0,
+                          width: 1.0,
                           color: kDividerLineGray,
                           style: BorderStyle.solid,
                         ),
@@ -193,13 +202,15 @@ class _NewGameState extends State<NewGames> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 2.0),
+                      horizontal: 8.0,
+                      vertical: 2.0,
+                    ),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          width: 2.0,
+                          width: 1.0,
                           color: kDividerLineGray,
                           style: BorderStyle.solid,
                         ),
@@ -234,7 +245,7 @@ class _NewGameState extends State<NewGames> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          width: 2.0,
+                          width: 1.0,
                           color: kDividerLineGray,
                           style: BorderStyle.solid,
                         ),
@@ -266,6 +277,12 @@ class _NewGameState extends State<NewGames> {
                       ),
                     ),
                   ),
+                  if (isTournament)
+                    NewGFields(
+                      controller: _controller5,
+                      labelText: 'Number of Players',
+                      keyboardType: TextInputType.number,
+                    ),
                   Row(
                     children: [
                       Expanded(
@@ -344,6 +361,20 @@ class _NewGameState extends State<NewGames> {
 
                       int courtIdIndex = sCourts.indexOf(chooseCourt);
 
+                      int numOfPlayers;
+                      if (gameType == 'Single' && !isTournament) {
+                        numOfPlayers = 2;
+                      } else if (gameType == 'Double' && !isTournament) {
+                        numOfPlayers = 4;
+                      } else if (isTournament) {
+                        if (_controller5.text == "") {
+                          print("All Fields Mandatory");
+                          return;
+                        } else {
+                          numOfPlayers = int.parse(_controller5.text.trim());
+                        }
+                      }
+
                       selectedDate = DateTime(
                         selectedDate.year,
                         selectedDate.month,
@@ -367,6 +398,7 @@ class _NewGameState extends State<NewGames> {
                         time: Timestamp.fromDate(selectedDate),
                         players: [],
                         booked: false,
+                        numOfPlayers: numOfPlayers,
                       );
 
                       createGame(game, context);

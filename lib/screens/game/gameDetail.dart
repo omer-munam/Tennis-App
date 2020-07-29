@@ -218,7 +218,7 @@ class _GameDetailsState extends State<GameDetails> {
                 Column(
                   children: [
                     Text(
-                      '06',
+                      widget.game.players.length.toString(),
                       style: kCardHeading,
                     ),
                     Text(
@@ -246,7 +246,7 @@ class _GameDetailsState extends State<GameDetails> {
                 Column(
                   children: [
                     Text(
-                      widget.game.players.length.toString(),
+                      widget.game.numOfPlayers.toString(),
                       style: kCardHeading,
                     ),
                     Text(
