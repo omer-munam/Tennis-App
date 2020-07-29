@@ -165,7 +165,7 @@ class DatabaseService {
         time: doc.data['time'],
         result: doc.data['result'],
         notes: doc.data['notes'],
-        numOfPlayers: doc.data['numOfPlayers'],
+        slots: doc.data['slots'],
       );
     }).toList();
   }

@@ -246,7 +246,7 @@ class _GameDetailsState extends State<GameDetails> {
                 Column(
                   children: [
                     Text(
-                      widget.game.numOfPlayers.toString(),
+                      '${widget.game.players.length + 1}',
                       style: kCardHeading,
                     ),
                     Text(
@@ -260,11 +260,11 @@ class _GameDetailsState extends State<GameDetails> {
                 Column(
                   children: [
                     Text(
-                      '25',
+                      widget.game.slots.toString(),
                       style: kCardHeading,
                     ),
                     Text(
-                      'No. of Seats',
+                      'No. of Slots',
                       style: TextStyle(
                         fontSize: 13,
                       ),

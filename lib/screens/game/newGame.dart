@@ -361,17 +361,17 @@ class _NewGameState extends State<NewGames> {
 
                       int courtIdIndex = sCourts.indexOf(chooseCourt);
 
-                      int numOfPlayers;
+                      int slots;
                       if (gameType == 'Single' && !isTournament) {
-                        numOfPlayers = 2;
+                        slots = 2;
                       } else if (gameType == 'Double' && !isTournament) {
-                        numOfPlayers = 4;
+                        slots = 4;
                       } else if (isTournament) {
                         if (_controller5.text == "") {
                           print("All Fields Mandatory");
                           return;
                         } else {
-                          numOfPlayers = int.parse(_controller5.text.trim());
+                          slots = int.parse(_controller5.text.trim());
                         }
                       }
 
@@ -398,7 +398,7 @@ class _NewGameState extends State<NewGames> {
                         time: Timestamp.fromDate(selectedDate),
                         players: [],
                         booked: false,
-                        numOfPlayers: numOfPlayers,
+                        slots: slots,
                       );
 
                       createGame(game, context);

@@ -14,7 +14,7 @@ class Game {
   Timestamp time;
   String result;
   String notes;
-  int numOfPlayers;
+  int slots;
 
   Game({
     this.id,
@@ -30,7 +30,7 @@ class Game {
     this.time,
     this.result,
     this.notes,
-    this.numOfPlayers,
+    this.slots,
   });
 
   Game.fromSnapshot(DocumentSnapshot snapshot) {
@@ -47,7 +47,7 @@ class Game {
     time = snapshot.data['time'];
     result = snapshot.data['result'];
     notes = snapshot.data['notes'];
-    numOfPlayers = snapshot.data['numOfPlayers'];
+    slots = snapshot.data['slots'];
   }
 
   Map<String, dynamic> toJson() {
@@ -65,7 +65,7 @@ class Game {
       'time': time,
       'result': result,
       'notes': notes,
-      'numOfPlayers': numOfPlayers,
+      'slots': slots,
     };
   }
 }
