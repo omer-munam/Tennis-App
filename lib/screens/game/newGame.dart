@@ -265,6 +265,12 @@ class _NewGameState extends State<NewGames> {
                       ),
                     ),
                   ),
+                  if (isTournament)
+                    NewGFields(
+                      controller: _controller5,
+                      labelText: 'Number of Slots',
+                      keyboardType: TextInputType.number,
+                    ),
                   Row(
                     children: [
                       Expanded(
