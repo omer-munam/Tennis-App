@@ -23,7 +23,7 @@ class _MyGamesState extends State<MyGames> {
   List<Game> myGames;
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser currentUser;
-
+  bool myGame = false;
   @override
   Widget build(BuildContext context) {
     return loading

@@ -12,7 +12,8 @@ import 'package:tennis_event/utilities/constants.dart';
 
 class JoinGameCard extends StatelessWidget {
   Game game;
-  JoinGameCard(this.game);
+  bool joinGame;
+  JoinGameCard(this.game, this.joinGame);
   bool loading = false;
   Court court;
   DatabaseService _db;
@@ -46,12 +47,25 @@ class JoinGameCard extends StatelessWidget {
                     ),
                   );
                 } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BottomSecondMbar(),
-                    ),
-                  );
+                  if (joinGame) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameDetails(
+                          game,
+                          court: court,
+                          join: true,
+                        ),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BottomSecondMbar(),
+                      ),
+                    );
+                  }
                 }
               },
               child: Container(

@@ -28,6 +28,7 @@ class _JoinGameState extends State<JoinGame> {
   FirebaseUser currentUser;
   User user;
   Court court;
+  bool joinGame = true;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +105,7 @@ class _JoinGameState extends State<JoinGame> {
                                 value: _db.court,
                                 child: StreamProvider<User>.value(
                                   value: _db.userData,
-                                  child: JoinGameCard(games[index]),
+                                  child: JoinGameCard(games[index],joinGame),
                                 ),
                               );
                             },
