@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/user.dart';
 import 'package:tennis_event/Models/game.dart';
+import 'package:async/async.dart';
 
 class DatabaseService {
   final String userId;
@@ -124,11 +125,16 @@ class DatabaseService {
         .map((snapshot) => Court.fromSnapshot(snapshot));
   }
 
-  Stream<List<Game>> get userGames {
-    return _gamesCollectionReference
+  Stream<List<List<Game>>> get userGames {
+    Stream<List<Game>> stream1 = _gamesCollectionReference
+        .where('players', arrayContains: userId)
+        .snapshots()
+        .map(_gamesListFromSnapshot);
+    Stream<List<Game>> stream2 = _gamesCollectionReference
         .where('organizerId', isEqualTo: userId)
         .snapshots()
         .map(_gamesListFromSnapshot);
+    return StreamZip([stream1, stream2]).asBroadcastStream();
   }
 
   Stream<List<Game>> get games {

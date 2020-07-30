@@ -37,7 +37,8 @@ class _MyGamesState extends State<MyGames> {
                   stream: _db.userGames,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      myGames = snapshot.data;
+                      myGames = snapshot.data[0];
+                      myGames += snapshot.data[1];
                       if (myGames.isNotEmpty) {
                         return Scaffold(
                           resizeToAvoidBottomInset: false,

@@ -36,13 +36,14 @@ class UserGamesCard extends StatelessWidget {
         // print('players: ${game.players}');
         return gameCard(context);
       } else {
-        // print('players: ${game.players}');
+        print('players: ${game.players}');
         _db = DatabaseService(playerIds: game.players);
         return StreamBuilder(
           stream: _db.usersDataForGame,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               players = snapshot.data;
+              print('players: ${players.length}');
               return gameCard(context);
             } else {
               return Container();
@@ -95,11 +96,12 @@ class UserGamesCard extends StatelessWidget {
                     style: kCardSubtitle,
                   ),
                   if (players != null)
-                    Text(
-                      players[0].userName + ', ' + players[1].userName,
-                      style: kCardSubHeading,
-                      overflow: TextOverflow.ellipsis,
-                    )
+                    for (var player in players)
+                      Text(
+                        player.userName + ' ',
+                        style: kCardSubHeading,
+                        overflow: TextOverflow.ellipsis,
+                      )
                   else
                     Text(
                       '-',
