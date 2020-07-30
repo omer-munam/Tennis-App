@@ -241,6 +241,16 @@ class _GameDetailsState extends State<GameDetails> {
                     ),
                     onPressed: () async {
                       print('join');
+                      if (widget.game.slots == widget.game.players.length) {
+                        Fluttertoast.showToast(
+                          msg: 'No available slots!',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
+                        return;
+                      }
                       if (!widget.game.players.contains(currentUser.uid)) {
                         loading = true;
                         widget.game.players.add(currentUser.uid);
@@ -256,6 +266,8 @@ class _GameDetailsState extends State<GameDetails> {
                           msg: 'You\'ve already joined this game',
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
                         );
                       }
                     },
