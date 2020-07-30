@@ -60,7 +60,11 @@ class UserGamesCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => GameDetails(game, court: court),
+              builder: (context) => GameDetails(
+                game,
+                court: court,
+                join: false,
+              ),
             ),
           );
         } else {
@@ -128,9 +132,9 @@ class UserGamesCard extends StatelessWidget {
                           left: 25.0,
                         ),
                         child: Text(
-                          DateFormat.yMMMMd('en_US').add_jm().format(
-                                game.time.toDate(),
-                              ),
+                          DateFormat.yMMMMd('en_US')
+                              .add_jm()
+                              .format(game.time.toDate()),
                           style: kCardSubtitle,
                         ),
                       ),

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/game.dart';
@@ -14,8 +16,9 @@ class GameDetails extends StatefulWidget {
   static const String id = 'game_details_screen';
   Game game;
   Court court;
+  bool join;
 
-  GameDetails(this.game, {this.court});
+  GameDetails(this.game, {this.court, this.join});
   @override
   _GameDetailsState createState() => _GameDetailsState();
 }
@@ -24,6 +27,8 @@ class _GameDetailsState extends State<GameDetails> {
   DatabaseService _db;
   User organizer;
   List<User> players;
+  bool loading = false;
+  FirebaseUser currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -34,59 +39,71 @@ class _GameDetailsState extends State<GameDetails> {
       courtId: widget.game.courtId,
     );
 
-    return StreamBuilder(
-      stream: _db.userData,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          organizer = snapshot.data;
-          if (widget.game.players.isEmpty) {
-            if (widget.court != null) {
-              return scaffold();
-            } else {
-              return StreamBuilder(
-                stream: _db.court,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    widget.court = snapshot.data;
-                    return scaffold();
-                  } else {
-                    return Loading();
-                  }
-                },
-              );
-            }
-          } else {
-            return StreamBuilder(
-              stream: _db.usersDataForGame,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  players = snapshot.data;
-                  if (widget.court != null) {
-                    return scaffold();
-                  } else {
-                    return StreamBuilder(
-                      stream: _db.court,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          widget.court = snapshot.data;
+    return loading
+        ? Loading()
+        : FutureBuilder(
+            future: _db.getCurrentUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                currentUser = snapshot.data;
+                return StreamBuilder(
+                  stream: _db.userData,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      organizer = snapshot.data;
+                      if (widget.game.players.isEmpty) {
+                        if (widget.court != null) {
                           return scaffold();
                         } else {
-                          return Loading();
+                          return StreamBuilder(
+                            stream: _db.court,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                widget.court = snapshot.data;
+                                return scaffold();
+                              } else {
+                                return Loading();
+                              }
+                            },
+                          );
                         }
-                      },
-                    );
-                  }
-                } else {
-                  return Loading();
-                }
-              },
-            );
-          }
-        } else {
-          return Loading();
-        }
-      },
-    );
+                      } else {
+                        return StreamBuilder(
+                          stream: _db.usersDataForGame,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              players = snapshot.data;
+                              if (widget.court != null) {
+                                return scaffold();
+                              } else {
+                                return StreamBuilder(
+                                  stream: _db.court,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      widget.court = snapshot.data;
+                                      return scaffold();
+                                    } else {
+                                      return Loading();
+                                    }
+                                  },
+                                );
+                              }
+                            } else {
+                              return Loading();
+                            }
+                          },
+                        );
+                      }
+                    } else {
+                      return Loading();
+                    }
+                  },
+                );
+              } else {
+                return Loading();
+              }
+            },
+          );
   }
 
   Widget scaffold() {
@@ -111,11 +128,14 @@ class _GameDetailsState extends State<GameDetails> {
               fit: BoxFit.fill,
             ),
           ),
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -207,7 +227,41 @@ class _GameDetailsState extends State<GameDetails> {
                   ],
                 ),
               ),
-            ),
+              if (widget.join == null ? false : widget.join)
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                      side: BorderSide(color: kMainThemeColor),
+                    ),
+                    color: Colors.white,
+                    child: Text(
+                      'Join Now',
+                    ),
+                    onPressed: () async {
+                      print('join');
+                      if (!widget.game.players.contains(currentUser.uid)) {
+                        loading = true;
+                        widget.game.players.add(currentUser.uid);
+                        var result = await _db.joinGame(widget.game);
+                        if (result != null) {
+                          print(result.toJson());
+                          loading = false;
+                          (context as Element)
+                              .reassemble(); //Refresh current page
+                        }
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: 'You\'ve already joined this game',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                        );
+                      }
+                    },
+                  ),
+                ),
+            ],
           ),
           DividerLine(),
           Container(

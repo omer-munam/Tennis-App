@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tennis_event/Models/court.dart';
 import 'package:tennis_event/Models/user.dart';
@@ -9,6 +10,7 @@ class DatabaseService {
   final String userId;
   final String courtId;
   final List<String> playerIds;
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   DatabaseService({this.userId, this.courtId, this.playerIds, String userid});
 
@@ -61,6 +63,15 @@ class DatabaseService {
     }
   }
 
+  Future<Game> joinGame(Game game) async {
+    try {
+      await _gamesCollectionReference.document(game.id).setData(game.toJson());
+      return game;
+    } catch (e) {
+      print(e.message);
+    }
+  }
+
   Future<bool> checkUser(String uid) async {
     DocumentSnapshot doc = await _usersCollectionReference.document(uid).get();
     if (doc.exists)
@@ -77,6 +88,11 @@ class DatabaseService {
     final StorageTaskSnapshot storageTaskSnapshot =
         await storageUploadTask.onComplete;
     return await storageReference.getDownloadURL();
+  }
+
+  Future<FirebaseUser> getCurrentUser() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user;
   }
 
   Stream<User> get userData {
@@ -113,6 +129,10 @@ class DatabaseService {
         .where('organizerId', isEqualTo: userId)
         .snapshots()
         .map(_gamesListFromSnapshot);
+  }
+
+  Stream<List<Game>> get games {
+    return _gamesCollectionReference.snapshots().map(_gamesListFromSnapshot);
   }
 
   List<User> _usersListFromSnapshot(QuerySnapshot snapshot) {

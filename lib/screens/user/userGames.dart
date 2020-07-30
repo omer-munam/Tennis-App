@@ -24,17 +24,12 @@ class _MyGamesState extends State<MyGames> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser currentUser;
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user = await _auth.currentUser();
-    return user;
-  }
-
   @override
   Widget build(BuildContext context) {
     return loading
         ? Loading()
         : FutureBuilder(
-            future: getCurrentUser(),
+            future: _db.getCurrentUser(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 _db = DatabaseService(userId: snapshot.data.uid);
